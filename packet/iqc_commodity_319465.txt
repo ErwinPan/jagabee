@@ -1,0 +1,323 @@
+GET /Commodity/Detail/319465 HTTP/1.1
+Host: iqc.com.tw
+Connection: keep-alive
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+User-Agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/34.0.1847.116 Chrome/34.0.1847.116 Safari/537.36
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4
+Cookie: ASP.NET_SessionId=0jmrf545eecaz3babivcnn45; __utma=9036589.910889559.1402571233.1402641227.1402651036.6; __utmb=9036589.12.10.1402651036; __utmc=9036589; __utmz=9036589.1402571233.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __atuvc=40%7C24
+
+HTTP/1.1 200 OK
+Date: Fri, 13 Jun 2014 09:25:07 GMT
+Server: Microsoft-IIS/6.0
+X-Powered-By: ASP.NET
+X-AspNet-Version: 2.0.50727
+X-AspNetMvc-Version: 2.0
+Cache-Control: private
+Content-Type: text/html; charset=utf-8
+Content-Length: 13734
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /><title>
+	
+	iQC 商品安全驗證資訊網
+
+</title><link href="/CSS/frontPlatformStyle.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/Scripts/jquery-1.4.1.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.accordionza.min.js"></script>
+    <script type="text/javascript" src="/Scripts/script.js"></script>
+    <script type="text/javascript" src="/Scripts/MicrosoftAjax.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // Accordion Demo #2
+        $('#accordionFeatures').accordionza({
+            autoPlay: true,
+            autoRestartDelay: 3000,
+            onSlideClose: function () {
+                this.children('p').stop(true).animate({ left: 320, opacity: 0 }, 500);
+            },
+            onSlideOpen: function () {
+                var properties = { left: 160, opacity: 1 };
+                var duration = 500;
+                var easing = 'easeOutBack';
+                this.children('p').stop(true)
+				.filter(':eq(0)').animate({ opacity: 0 }, 000).animate(properties, duration, easing).end()
+				.filter(':eq(1)').animate({ opacity: 0 }, 250).animate(properties, duration, easing).end()
+				.filter(':eq(2)').animate({ opacity: 0 }, 500).animate(properties, duration, easing);
+            },
+            slideDelay: 3000,
+            slideEasing: 'easeOutCirc',
+            slideSpeed: 250,
+            slideTrigger: 'mouseover',
+            slideWidthClosed: 160
+        });
+    });
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-33309827-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+</head>
+
+<body>
+<div id="container">
+	<div id="topContainer">
+        <div id="header">
+            <div id="headerGoogle">
+            <div id="fb-root"></div>
+                <script>                    (function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1";
+                        fjs.parentNode.insertBefore(js, fjs);
+                    } (document, 'script', 'facebook-jssdk'));</script>
+               <div class="fb-like" data-href="http://iqc.think4u-tech.com/" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+            </div>
+            <div id="headeLogo">
+              <a href="/" title="iQC 商品安全驗證資訊網">iQC 商品安全驗證資訊網</a>
+            </div>
+            <form action="/Search" method="post">
+            <div id="searchBar">                
+                <input name="Keyword" type="text" class="queryInput" /><a href="javascript:void(0)" class="basic" title="搜尋" onclick='$("form:first").submit();'>搜尋</a><a class="advance" href="/Commodity/AdvancedSearch" title="進階搜尋">進階搜尋</a>                
+            </div>
+            <div id="queryCheckBox" style="display:none">
+                <input name="searchType" id="searchType1" type="radio" value="1" checked="" />從目前結果再查詢    
+                <input name="searchType" id="searchType2" type="radio" value="2" checked=""/> 重新查詢 
+            </div>
+            </form>  
+        </div>
+    </div>
+</div>  
+    <div id="middleContainer">
+    <!--**中間內容**--> 
+        
+    <div class="history"><a href="/Commodity">回上一頁</a><br class="clear" /> </div>
+    <div class="borderHeader"></div>
+       <div class="borderMiddle">
+       	<div>
+        
+        	<div class="detailLeft">
+				<div class="detailItemImg"><img src="/images/Commodity/黑松沙士.png" width="240" height="190" /></div>
+                <ul class="certificateLogoList">
+                                        
+               </ul> 
+               <br class="clear" />    
+            </div>
+            
+            <div class="detailRight">
+            	<div class="description">
+                    <h3>黑松沙士加鹽 600ml</h3>
+                    產品條碼：4710154012168<br />
+                    製造產地：<br />
+                    有效期限：
+                </div>
+              <div class="reportDropDown">
+               	<div class="selectDropdown" style="cursor:pointer" >
+                        <div>
+                                
+                        </div>
+               	  </div>
+               	<div class="warning"><p>                    
+                     
+                </div>
+              </div>
+              <br class="clear" /> 
+              <div class="greenLine"></div>
+              <ul class="checkOkList">
+                 
+              </ul>
+            </div>
+            <br class="clear" /> 
+            <div>
+                <div class="greenLine"></div>
+                
+                    <!--google facebook--> 
+                    
+<div class="addthis_toolbox addthis_default_style ">
+    <a class="addthis_button_facebook_like" fb:like:layout="button_count" style="width: 70px;">
+    </a><a class="addthis_button_tweet" style="width: 85px;"></a><a class="addthis_button_google_plusone"
+        g:plusone:size="medium" style="width: 70px;"></a><a class="addthis_counter addthis_pill_style"
+            style="width: 70px;"></a>
+                    </div>
+<script type="text/javascript">    var addthis_config = { "data_track_addressbar": false };</script>
+                    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4fe80961444567a9"></script>
+                    
+                    <!--google facebook--> 
+
+                <div class="greenLine"></div>
+                <h3>商家其他產品</h3>
+                <ul class="list5Items">
+                    
+<li><a href="/Commodity/Detail/193117">
+    
+    <img src="/Images/Commodity/CommodityNoLogo.jpg" width="145" border="0" alt="黑松C&amp;C高維他命C飲料(檸檬)"
+        title="黑松C&amp;C高維他命C飲料(檸檬)" />
+    
+</a><a href="/Commodity/Detail/193117" class="itemName">
+    黑松C&amp;C高維他命C飲料(檸檬)</a></li>
+
+<li><a href="/Commodity/Detail/193083">
+    
+    <img src="/Images/Commodity/CommodityNoLogo.jpg" width="145" border="0" alt="黑松綠洲芭樂汁(紙盒1000g)"
+        title="黑松綠洲芭樂汁(紙盒1000g)" />
+    
+</a><a href="/Commodity/Detail/193083" class="itemName">
+    黑松綠洲芭樂汁(紙盒1000g)</a></li>
+
+<li><a href="/Commodity/Detail/193086">
+    
+    <img src="/Images/Commodity/CommodityNoLogo.jpg" width="145" border="0" alt="黑松檸檬水(PKL500ml)"
+        title="黑松檸檬水(PKL500ml)" />
+    
+</a><a href="/Commodity/Detail/193086" class="itemName">
+    黑松檸檬水(PKL500ml)</a></li>
+
+<li><a href="/Commodity/Detail/318884">
+    
+    <img src="/Images/Commodity/CommodityNoLogo.jpg" width="145" border="0" alt="黑松 蘋果C"
+        title="黑松 蘋果C" />
+    
+</a><a href="/Commodity/Detail/318884" class="itemName">
+    黑松 蘋果C</a></li>
+
+<li><a href="/Commodity/Detail/173172">
+    
+    <img src="/Images/Commodity/CommodityNoLogo.jpg" width="145" border="0" alt="黑松山塔力佳咖啡(原味)鐵罐250g"
+        title="黑松山塔力佳咖啡(原味)鐵罐250g" />
+    
+</a><a href="/Commodity/Detail/173172" class="itemName">
+    黑松山塔力佳咖啡(原味)鐵罐250g</a></li>
+                    
+				</ul>              
+                <br class="clear" />
+                <br /><br />
+                <h3>商家資料</h3>
+                <img src="/images/Company/CompanyNoLogo.jpg" class="detailCompanyLogo" />
+                <ul class="companyInfoList">
+                	<li>商家名稱：黑松股份有限公司</li>
+                	<li>商家地址：</li>
+                	<li>聯絡電話：-</li>
+                	<li>產品網站：</li>
+              	</ul>
+                <br class="clear" />
+            	
+            </div>    
+		<div>
+        </div>
+        </div>
+       </div>
+       <div class="borderFooter">
+       </div>
+        <br class="clear" />
+                               
+    <!--**中間內容**-->     
+    </div>    
+    <div id="footerContainer">
+    	<div id="footerlinks">
+        <p><img src="/upload/iQC熱門商家(2014-04-14_045803).png" alt="" usemap="#Map" /> <map name="Map"> 
+<area shape="rect" coords="50,139,170,289" href="http://iqc.com.tw/Page/109/磐石國際行銷有限公司" target="_blank" />
+ 
+<area shape="rect" coords="180,139,305,302" href="http://iqc.com.tw/Page/107/必盛氏漢補養生食品有限公司" target="_blank" />
+ 
+<area shape="rect" coords="315,136,447,297" href="http://iqc.com.tw/Page/116/康富生技中心股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="463,146,565,297" href="http://tw.mall.yahoo.com/search?m=list&amp;sid=decobox&amp;ccatid=1&amp;path=1" target="_blank" />
+ 
+<area shape="rect" coords="588,144,695,299" href="http://iqc.com.tw/Page/115/醄醴有限公司" target="_blank" />
+ 
+<area shape="rect" coords="730,146,830,352" href="http://iqc.com.tw/Page/113/至茂企業股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="858,144,975,274" href="http://iqc.com.tw/Page/111/碧莎蕾藥品實業有限公司" target="_blank" />
+ 
+<area shape="rect" coords="855,6,973,134" href="http://iqc.com.tw/Page/110/天素食品有限公司" target="_blank" />
+ 
+<area shape="rect" coords="728,11,828,138" href="http://iqc.com.tw/Page/106/中立食品" target="_blank" />
+ 
+<area shape="rect" coords="587,11,692,138" href="http://iqc.com.tw/Page/112/森岳股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="462,14,560,141" href="http://www.run.com.tw/" target="_blank" />
+ 
+<area shape="rect" coords="312,4,447,131" href="http://www.hightea.com.tw/" target="_blank" />
+ 
+<area shape="rect" coords="183,14,300,131" href="http://iqc.com.tw/Page/108/尚好堅果" target="_blank" />
+ 
+<area shape="rect" coords="42,12,175,131" href="http://www.shaomei.com.tw/" target="_blank" />
+ </map></p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="19%">
+<h4>關於我們</h4>
+<ul>
+<li><a href="/Page/33/About">公司簡介</a></li>
+<li><a href="/Page/61/mov">雲端品保影片</a></li>
+<li><a href="/Page/64/Services">iQC特色服務</a></li>
+<li><a href="/Page/62/Activity">媒體活動曝光</a></li>
+<li><a href="http://www.104.com.tw/jobbank/custjob/index.php?r=cust&amp;j=40424a733c3e466f383a426b40463e219313131744864467109j48&amp;jobsource=checkc" target="_self">人才招募</a></li>
+<li><a href="/contactUs">聯繫我們</a></li>
+</ul>
+</td>
+<td width="16%">
+<h4>事件追蹤</h4>
+<ul>
+<li><a href="/Page/72/%E4%B8%8D%E5%90%AB%E9%A0%86%E4%B8%81%E7%83%AF%E4%BA%8C%E9%85%B8%E5%95%86%E5%93%81">順丁烯二酸</a></li>
+<li><a href="/Page/90/CopperChlorophyll">混油事件</a></li>
+</ul>
+</td>
+<td width="12%">
+<h4>幫助中心</h4>
+<ul>
+<li><a href="/Page/29/links">友善連結</a></li>
+<li><a href="/Page/26/Sitemap">網站地圖</a></li>
+<li><a href="/Page/28/faq">常見問題</a></li>
+</ul>
+</td>
+<td width="20%">
+<h4>法律顧問</h4>
+<ul>
+<li><a href="/Page/30/privacy">隱私權保護政策</a></li>
+<li><a href="/Page/27/copyright">商務版權</a></li>
+<li><a href="/Page/36/Audit">審核的規範</a></li>
+<li><a href="/Page/37/Use">使用規範</a></li>
+</ul>
+</td>
+<td width="19%">
+<h4>服務內容</h4>
+<ul>
+<li><a href="/Page/41/Buy">團購檢驗</a></li>
+<li><a href="/Page/63/RSS_email">資訊訂閱</a></li>
+<li><a href="/Page/53/Register-1">刊登流程</a></li>
+<li><a href="/Page/35/Download">表單下載</a></li>
+<li><a href="http://discuz.iqc.com.tw/forum.php" target="_blank">社群討論</a></li>
+<li><a href="/Page/32/App">手機App下載</a></li>
+</ul>
+</td>
+<td align="right" width="14%"><a href="/Page/32/App"><img src="/images/footer/appStore.png" alt="" border="0" /></a>
+<div id="webutation-badge"><a id="webutation-link" href="http://www.webutation.net/go/review/iqc.com.tw">iqc.com.tw Webutation</a></div>
+<p><a style="text-decoration: none; display: inline-block; color: #333; text-align: center; font: 13px/16px arial,sans-serif; white-space: nowrap;" href="http://plus.google.com/107927766077574859603?prsrc=3" rel="publisher" target="_top"><span style="display: inline-block; font-weight: bold; vertical-align: top; margin-right: 5px; margin-top: 8px;">訂閱 iQC</span><span style="display: inline-block; vertical-align: top; margin-right: 15px; margin-top: 8px;">on</span> <img style="border: 0; width: 32px; height: 32px;" src="http://ssl.gstatic.com/images/icons/gplus-32.png" alt="Google+" /></a></p>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</td>
+</tr>
+</tbody>
+</table>
+    	
+	</div>
+    	<hr />
+  </div>
+</div>    
+</body>
+</html>
