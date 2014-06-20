@@ -19,25 +19,25 @@ def iqc_dump_list_page(url, referer = ''):
 
     print 'dump %s to target_file:%s , referer:%s' % (url, target_file, referer)
     # Fetch html page
-    html = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file, referer)
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file, referer)
    
-    return html
+    return html_text
 
 
 def iqc_dump_category(url):
 
-    print "Start to parse category url: %s " % url
+    print "Start to parse category url: %s ..." % url
 
     # Category with Referer
     #url = 'http://iqc.com.tw/List/2/'
     #referer = 'http://iqc.com.tw/List/1/'
     #referer = 'http://iqc.com.tw/List/0/1/61'
 
-    html = iqc_dump_list_page(url)
+    html_text = iqc_dump_list_page(url)
 
     # Parse html page
-    if len(html) > 0:
-        ret = iqc_parse_pages.parse_list_page(html, True)
+    if len(html_text) > 0:
+        ret = iqc_parse_pages.parse_list_page(html_text, True)
 
     # Calculate pages in this category
     page_count = 0
@@ -48,19 +48,70 @@ def iqc_dump_category(url):
     for i in range(1, page_count):
         referer = url
         url = 'http://iqc.com.tw/List/' + str(i) + '/'
-        html = iqc_dump_list_page(url)
+        html_text = iqc_dump_list_page(url)
 
 
+def iqc_parse_commodity(product_id, ret = {}):
+
+    print "Start to dump product_id %s ..." % product_id
+
+    # http://iqc.com.tw/Commodities/Detail/176725
+    url = 'http://iqc.com.tw/Commodities/Detail/' + product_id
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
+
+    if len(html_text) > 0:
+        iqc_parse_pages.parse_commodities_page(html_text, ret)
+
+    # http://iqc.com.tw/Commodity/Detail/176725
+    url = 'http://iqc.com.tw/Commodity/Detail/' + product_id
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
+
+    if len(html_text) > 0:
+        iqc_parse_pages.parse_commodity_page(html_text, ret)
+
+    return ret
 
 def iqc_parse_list_file(list_file):
     
-    print "Start to parse list file: %s" % list_file
+    print "Start to parse list file: %s ..." % list_file
 
+    if list_file != '':
+        f = open( list_file , 'r' )
+        html_text = f.read()
+        f.close()
+
+    if len(html_text) <= 0:
+        return
+
+    ret = {}
+    ret = iqc_parse_pages.parse_list_page(html_text, False, ret)
+
+    i = 0
+
+    for c in ret['link']:
+        # /Commodities/Detail/171342
+        # print 'c=%s, type=%s, rindex of "/" is %d' % (str(c), str(type(c)), string.rindex(c, '/'))
+        try:
+            product_id = c[string.rindex(c, '/')+1:]
+            print 'product_id: %s' % product_id
+            ret = iqc_parse_commodity(product_id)
+
+            i += 1
+
+            if i >= 3:
+                return # dump first only
+
+        except Exception, e:
+            print "Parse commodity fails ..." 
+            traceback.print_exc()
+            pass
     return
 
 def iqc_parse_list_dir(list_dir):
-    
-    print "Start to parse list pages in current directory: %s" % list_dir
+
+    print "Start to parse list pages in current directory: %s ..." % list_dir
+
+    iqc_parse_list_file("iqc.com.tw_List_0_1_61/iqc.com.tw_List_0_1_61.html")
 
     return
 
