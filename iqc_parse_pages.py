@@ -64,8 +64,8 @@ def dump_match(match):
 
 
 
-def parse_list_page(html, b_first_page):
-    ret = {}
+def parse_list_page(html, b_first_page, ret={}):
+
     count = 0
     ret['link'] = []
     ret['total_product_counts'] = 0
@@ -133,7 +133,7 @@ def parse_list_page(html, b_first_page):
 	    continue
 
         # Parse li tag, where re.findall will return a "list" composed of "str" (due to single capturing group "()")
-	href_matches = re.findall( re.compile( '<a href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , li_match)
+	href_matches = re.findall( re.compile( '<a href=\"(.*?)\">[\s]*<img' , flags=(re.IGNORECASE|re.DOTALL)) , li_match)
 	for href_match in href_matches:
             #dump_match(href_match)
 	    ret['link'].append(href_match)
@@ -146,9 +146,7 @@ def parse_list_page(html, b_first_page):
 
 
 
-def parse_commodities_page(html):
-
-    ret = {}
+def parse_commodities_page(html, ret={}):
 
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
     print "len(body) = " + str(len(body))
@@ -173,10 +171,8 @@ def parse_commodities_page(html):
 
     return ret
 
-def parse_commodity_page(html):
+def parse_commodity_page(html, ret={}):
     
-    ret = {}
-
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
     print "len(body) = " + str(len(body))
     if len(body) < 1 :
