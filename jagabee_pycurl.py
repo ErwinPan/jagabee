@@ -6,7 +6,7 @@ import traceback
 import sys
 import re
 
-def pycurl_wrapper_fetch(url, target_file, referer = ''):
+def pycurl_wrapper_fetch(url, target_file = '', referer = ''):
 
 
     #
@@ -32,9 +32,10 @@ def pycurl_wrapper_fetch(url, target_file, referer = ''):
     r = b.getvalue()
     b.close()
 
-    f = open( target_file , 'wb' )
-    f.write( r )
-    f.close()
+    if target_file != '':
+        f = open( target_file , 'wb' )
+        f.write( r )
+        f.close()
 
     return r
 
