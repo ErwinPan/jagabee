@@ -5,10 +5,34 @@ import StringIO
 import traceback
 import sys
 import re
+import time
+import random
 
-def pycurl_wrapper_fetch(url, target_file = '', referer = ''):
+def pycurl_wrapper_fetch(url, target_file = '', referer = '', retry = 3):
+
+    html_text = ''
+
+    for i in range(0, retry):
+        try:
+            print 'http pycurl_wrapper_fetch, try = %d, url = %s' % (i, url)
+
+            (http_code, html_text) = pycurl_wrapper_fetch_internal(url, target_file, referer)
+
+            if http_code != 200:
+                html_text = ''
+
+            if len(html_text) > 0:
+                break
+
+        except Exception, e:
+            traceback.print_exc()
+            time.sleep(random.random())
+            pass
+
+    return html_text
 
 
+def pycurl_wrapper_fetch_internal(url, target_file = '', referer = ''):
     #
     # 1st request
     #
@@ -28,16 +52,20 @@ def pycurl_wrapper_fetch(url, target_file = '', referer = ''):
 
     c.perform()
 
+    http_code = c.getinfo(pycurl.HTTP_CODE)
+
     #print b.getvalue()
     r = b.getvalue()
     b.close()
 
+    #print 'http code is: %s, len(html) = %d' % (http_code, len(r))
+        
     if target_file != '':
         f = open( target_file , 'wb' )
         f.write( r )
         f.close()
 
-    return r
+    return http_code, r
 
 
 
