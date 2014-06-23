@@ -7,9 +7,14 @@ import sys, getopt
 import re
 import iqc_parse_pages
 import jagabee_pycurl
+import jagabee_sqlite3
 import string
 import time
 from os.path import join, getsize
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 
 def iqc_dump_list_page(url, referer = ''):
@@ -26,7 +31,7 @@ def iqc_dump_list_page(url, referer = ''):
 
 def iqc_dump_category(url):
 
-    print "Start to parse category url: %s ..." % url
+    print "\n==> Start to parse category url: %s ..." % url
 
     # Category with Referer
     #url = 'http://iqc.com.tw/List/2/'
@@ -51,19 +56,19 @@ def iqc_dump_category(url):
         html_text = iqc_dump_list_page(url)
 
 
-def iqc_parse_commodity(product_id, ret = {}):
+def iqc_parse_commodity(barcode, ret = {}):
 
-    print "Start to dump product_id %s ..." % product_id
+    print "\n===> Start to dump barcode %s ..." % barcode
 
     # http://iqc.com.tw/Commodities/Detail/176725
-    url = 'http://iqc.com.tw/Commodities/Detail/' + product_id
+    url = 'http://iqc.com.tw/Commodities/Detail/' + barcode
     html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
 
     if len(html_text) > 0:
         iqc_parse_pages.parse_commodities_page(html_text, ret)
 
     # http://iqc.com.tw/Commodity/Detail/176725
-    url = 'http://iqc.com.tw/Commodity/Detail/' + product_id
+    url = 'http://iqc.com.tw/Commodity/Detail/' + barcode
     html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
 
     if len(html_text) > 0:
@@ -73,7 +78,7 @@ def iqc_parse_commodity(product_id, ret = {}):
 
 def iqc_parse_list_file(list_file):
     
-    print "Start to parse list file: %s ..." % list_file
+    print "\n==> Start to parse list file: %s ..." % list_file
 
     if list_file != '':
         f = open( list_file , 'r' )
@@ -88,28 +93,43 @@ def iqc_parse_list_file(list_file):
 
     i = 0
 
+    list_dump = {'list_file' : list_file}
+    list_dump['commodities'] = []
+    list_dump_file = list_file + '.dict'    # Dump to a dictionary
+
     for c in ret['link']:
         # /Commodities/Detail/171342
         # print 'c=%s, type=%s, rindex of "/" is %d' % (str(c), str(type(c)), string.rindex(c, '/'))
         try:
-            product_id = c[string.rindex(c, '/')+1:]
-            print 'product_id: %s' % product_id
-            ret = iqc_parse_commodity(product_id)
+            barcode = c[string.rindex(c, '/')+1:]
+            print 'barcode: %s' % barcode
+            if (barcode is not None) and (barcode != ''):
+                commodity = {'barcode' : barcode}
+                commodity = iqc_parse_commodity(barcode, commodity)
+                list_dump['commodities'].append(commodity)
 
             i += 1
-
             if i >= 3:
-                return # dump first only
+                break # dump leading 3 only because we're still debugging
 
         except Exception, e:
             print "Parse commodity fails ..." 
             traceback.print_exc()
             pass
+
+   
+    jagabee_sqlite3.db_save_products(list_dump['commodities'])
+
+    # Save to a dictionary file and export to database in the future (not a good idea because saved string is not human readable, e.g: u'1234)
+    #f = open( list_dump_file , 'wb' )
+    #f.write(str(list_dump))
+    #f.close()
+
     return
 
 def iqc_parse_list_dir(list_dir):
 
-    print "Start to parse list pages in current directory: %s ..." % list_dir
+    print "\n=> Start to parse list pages in current directory: %s ..." % list_dir
 
     iqc_parse_list_file("iqc.com.tw_List_0_1_61/iqc.com.tw_List_0_1_61.html")
 
@@ -141,11 +161,11 @@ def main(argv):
     parse_list_dir = None
 
     try:
-        print "...xxx argv=%s" % str(argv)
+        #print " argv=%s" % str(argv)
         opts, other_args = getopt.getopt(argv[1:],"cf:d:",["parse-category=", "parse-list-file=", "parse-list-dir="])
 
     except getopt.GetoptError:
-        print "...123"
+        print "getopt.GetoptError: "
         traceback.print_exc()
         print_usage(argv[0])
         sys.exit(-1)

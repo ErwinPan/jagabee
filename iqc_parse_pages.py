@@ -140,7 +140,7 @@ def parse_list_page(html, b_first_page, ret={}):
 	    print "ret['link'][%d] = %s" % (count, ret['link'][count])
 	    count += 1
 
-	#print "commodity title=%s, vendor=%s, vender_addr=%s, vender_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vender_addr'], ret['vender_tel'], ret['website'])
+	#print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
 
     return ret
 
@@ -149,7 +149,7 @@ def parse_list_page(html, b_first_page, ret={}):
 def parse_commodities_page(html, ret={}):
 
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
-    print "len(body) = " + str(len(body))
+    #print "len(body) = " + str(len(body))
     if len(body) < 1 :
         print "No BODY DATA"
         return ret
@@ -157,24 +157,24 @@ def parse_commodities_page(html, ret={}):
     # Parse product tag, where re.findall will return a "list" composed of tuples (due to multiple capturing groups)
     all_matches = re.findall( re.compile( '<div class=\"description\">(.*?)<h3>[\s]*(.*?)</h3>(.*?)商家名稱：(.*?)<br(.*?)商家地址：(.*?)<br(.*?)聯絡電話：(.*?)[\s]*(.*?)商品網站：(.*?)<a href=\"(.*?)\"' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-	print "len(match) = " + str(len(match))
+	#print "len(match) = " + str(len(match))
 
 	#dump_match(match)
 
 	ret['title'] = match[1]
 	ret['vendor'] = match[3]
-	ret['vender_addr'] = match[5]
-	ret['vender_tel'] = match[7]
+	ret['vendor_addr'] = match[5]
+	ret['vendor_tel'] = match[7]
 	ret['website'] = match[10]
 
-	print "commodity title=%s, vendor=%s, vender_addr=%s, vender_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vender_addr'], ret['vender_tel'], ret['website'])
+	print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
 
     return ret
 
 def parse_commodity_page(html, ret={}):
     
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
-    print "len(body) = " + str(len(body))
+    #print "len(body) = " + str(len(body))
     if len(body) < 1 :
         print "No BODY DATA"
         return ret
@@ -186,10 +186,10 @@ def parse_commodity_page(html, ret={}):
 
 	ret['title'] = match[3]
 	ret['barcode'] = match[5]
-	ret['date'] = match[9]
-	ret['img'] = match[0]
+	ret['reserv_date'] = match[9]
+	ret['img_url'] = match[0]
 
-	print "commodity barcode=%s, date=%s, title=%s, img=%s" % (ret['barcode'], ret['date'], ret['title'], ret['img'])
+	print "commodity barcode=%s, reserv_date=%s, title=%s, img_url=%s" % (ret['barcode'], ret['reserv_date'], ret['title'], ret['img_url'])
 
     return ret
 
