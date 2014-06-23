@@ -40,17 +40,26 @@ def db_insert_rows(products, db_name):
 
     for p in products:
 
+        # Transfer dict to row tuple
+        row = (p['barcode'], p['title'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
+
         try:
-            row = (p['barcode'], p['title'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
+            cur.execute('DELETE from products WHERE barcode=?', (row[0],))
+        except sqlite3.Error:
+            # Ignore the error because
+            traceback.print_exc()
+            pass
 
-            cur.execute('INSERT INTO product VALUES (?,?,?,?,?,?,?,?)', row)
 
+        try:
+
+            cur.execute('INSERT INTO products VALUES (?,?,?,?,?,?,?,?)', row)
             inserted_row_count += 1
 
-        except sqlite3.Error:
-            print 'sqlite3.Error: insert fail due to table exist '
+        except sqlite3.Error, e:
+            print 'sqlite3.Error: '
             traceback.print_exc()
-
+            pass
 
     print 'db_insert_rows, inserted_row_count=%d' % inserted_row_count
 
@@ -69,7 +78,7 @@ def db_create(db_name):
         cur = conn.cursor()
 
         # Create table
-        cur.execute('''CREATE TABLE product
+        cur.execute('''CREATE TABLE products
                              (barcode text PRIMARY KEY, title text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
 
     except sqlite3.OperationalError:
