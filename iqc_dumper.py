@@ -10,6 +10,7 @@ import jagabee_pycurl
 import jagabee_sqlite3
 import string
 import time
+import random
 from os.path import join, getsize
 
 import sys
@@ -17,10 +18,26 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 
+iqc_working_directory = '.'
+
+def iqc_url_to_local_file(url):
+
+    if url[0:7] == 'http://':
+        # Replace filename
+        url = url[7:]  # Remove 'http://' (7 byes)
+    elif url[0:8] == 'https://':
+        url = url[8:]
+
+    target_file = string.replace(url, '/', '_') + '.html'
+
+    target_file = iqc_working_directory + '/' + target_file
+
+    return target_file
+
+
 def iqc_dump_list_page(url, referer = ''):
-    # Replace filename
-    target_file = url[7:]
-    target_file = string.replace(target_file, '/', '_') + '.html'
+
+    target_file = iqc_url_to_local_file(url)
 
     print 'dump %s to target_file:%s , referer:%s' % (url, target_file, referer)
     # Fetch html page
@@ -62,14 +79,20 @@ def iqc_parse_commodity(barcode, ret = {}):
 
     # http://iqc.com.tw/Commodities/Detail/176725
     url = 'http://iqc.com.tw/Commodities/Detail/' + barcode
-    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
+
+    target_file = iqc_url_to_local_file(url)
+
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
 
     if len(html_text) > 0:
         iqc_parse_pages.parse_commodities_page(html_text, ret)
 
     # http://iqc.com.tw/Commodity/Detail/176725
     url = 'http://iqc.com.tw/Commodity/Detail/' + barcode
-    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url)
+
+    target_file = iqc_url_to_local_file(url)
+
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
 
     if len(html_text) > 0:
         iqc_parse_pages.parse_commodity_page(html_text, ret)
@@ -109,12 +132,15 @@ def iqc_parse_list_file(list_file):
                 list_dump['commodities'].append(commodity)
 
             i += 1
-            if i >= 3:
+            if i >= 10:
                 break # dump leading 3 only because we're still debugging
 
         except Exception, e:
             print "Parse commodity fails ..." 
             traceback.print_exc()
+        finally:
+            # Sleep for a while to avoid busy accessing
+            time.sleep(random.random())
             pass
 
    

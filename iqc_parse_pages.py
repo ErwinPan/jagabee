@@ -155,19 +155,28 @@ def parse_commodities_page(html, ret={}):
         return ret
 
     # Parse product tag, where re.findall will return a "list" composed of tuples (due to multiple capturing groups)
-    all_matches = re.findall( re.compile( '<div class=\"description\">(.*?)<h3>[\s]*(.*?)</h3>(.*?)商家名稱：(.*?)<br(.*?)商家地址：(.*?)<br(.*?)聯絡電話：(.*?)[\s]*(.*?)商品網站：(.*?)<a href=\"(.*?)\"' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    all_matches = re.findall( re.compile( '<div class=\"description\">(.*?)<h3>[\s]*(.*?)</h3>(.*?)商家名稱：(.*?)<br(.*?)商家地址：(.*?)<br(.*?)聯絡電話：(.*?)[\s]*(.*?)商品網站：(.*?)<br' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-	#print "len(match) = " + str(len(match))
+        #print "len(match) = " + str(len(match))
+        pass
 
-	#dump_match(match)
+    #dump_match(match)
 
-	ret['title'] = match[1]
-	ret['vendor'] = match[3]
-	ret['vendor_addr'] = match[5]
-	ret['vendor_tel'] = match[7]
-	ret['website'] = match[10]
+    ret['title'] = match[1]
+    ret['vendor'] = match[3]
+    ret['vendor_addr'] = match[5]
+    ret['vendor_tel'] = match[7]
 
-	print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
+    # Parse match[9] again because it is complicated
+    ret['website'] = ''
+    website = match[9]
+    all_matches = re.findall( re.compile( '[\s]?<a href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , website)
+    for match in all_matches:
+        #print "len(match) = " + str(len(match))
+        ret['website'] = match  # For single group, it will return single element instead of couple, so no match[0] is needed
+        pass
+
+    print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
 
     return ret
 
@@ -197,14 +206,16 @@ def parse_commodity_page(html, ret={}):
 if __name__ == '__main__':
     try:
 	# Read file
-    	f = open( 'commodity_173185.html' , 'r' )
+        #f = open( 'http:__iqc.com.tw_Commodities_Detail_173160.html' , 'r' )
+        f = open( 'http:__iqc.com.tw_Commodities_Detail_319464.html' , 'r' )
+    	#f = open( 'commodity_173185.html' , 'r' )
     	#f = open( 'iqc.com.tw_List_0_1_61.html' , 'r' )
 	html_text = f.read()
     	f.close()
 
 	# parse 
-        #parse_commodities_page(html_text)
-        parse_commodity_page(html_text)
+        parse_commodities_page(html_text)
+        #parse_commodity_page(html_text)
         #parse_list_page(html_text, True)
 
         print "regular expression parsing done"
