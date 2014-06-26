@@ -33,7 +33,8 @@ def db_insert_rows(products, db_name):
         conn.text_factory = str
 
     except sqlite3.Error:
-        print 'sqlite3.Error: insert fail due to table exist '
+        print 'sqlite3.Error:'
+        traceback.print_exc()
 
     except Exception, e:
         traceback.print_exc()
@@ -82,7 +83,8 @@ def db_create(db_name):
                              (barcode text PRIMARY KEY, title text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
 
     except sqlite3.OperationalError:
-        print 'sqlite3.OperationalError: insert fail due to table exist '
+        #print 'sqlite3.OperationalError: insert fail due to table exist '
+        pass
 
     except Exception, e:
         traceback.print_exc()

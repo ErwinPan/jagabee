@@ -71,7 +71,7 @@ def parse_list_page(html, b_first_page, ret={}):
     ret['total_product_counts'] = 0
 
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
-    print "len(body) = " + str(len(body))
+    #print "len(body) = " + str(len(body))
     if len(body) < 1 :
         print "No BODY DATA"
         return ret

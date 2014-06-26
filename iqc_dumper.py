@@ -11,7 +11,7 @@ import jagabee_sqlite3
 import string
 import time
 import random
-from os.path import join, getsize
+import os
 
 import sys
 reload(sys)
@@ -132,7 +132,7 @@ def iqc_parse_list_file(list_file):
                 list_dump['commodities'].append(commodity)
 
             i += 1
-            if i >= 10:
+            if i >= 3:
                 break # dump leading 3 only because we're still debugging
 
         except Exception, e:
@@ -157,7 +157,28 @@ def iqc_parse_list_dir(list_dir):
 
     print "\n=> Start to parse list pages in current directory: %s ..." % list_dir
 
-    iqc_parse_list_file("iqc.com.tw_List_0_1_61/iqc.com.tw_List_0_1_61.html")
+    iqc_working_directory = list_dir
+
+    all_files = []
+    root = ''
+
+    for root, dirs, files in os.walk(list_dir):
+        print "root is %s, dirs is %s, files is %s" % (root, str(dirs), str(files))
+        if list_dir == root:
+            all_files = files
+            break
+
+    for f in all_files:
+        print "f is %s" % f
+        try:
+            if f.startswith('iqc.com.tw_List'):
+                iqc_parse_list_file(os.path.join(root, f))
+
+            pass
+
+        except Exception, e:
+            traceback.print_exc()
+
 
     return
 
@@ -169,7 +190,7 @@ def print_usage(cmd):
             Parse category
         -l, --parse-list-file=FILE
             Parse a list file
-        -d, --parse-list-file=DIR
+        -d, --parse-list-dir=DIR
             Parse list files in a directory
         -h, --help
             Print this usage
