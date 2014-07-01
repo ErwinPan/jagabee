@@ -9,10 +9,12 @@ import iqc_categories
 import iqc_parse_pages
 import jagabee_pycurl
 import jagabee_sqlite3
+from jagabee_printf import printf
 import string
 import time
 import random
 import os
+import errno
 
 import sys
 reload(sys)
@@ -23,6 +25,8 @@ iqc_working_directory = '.'
 
 def iqc_url_to_local_file(url):
 
+    global iqc_working_directory
+
     if url[0:7] == 'http://':
         # Replace filename
         url = url[7:]  # Remove 'http://' (7 byes)
@@ -31,6 +35,14 @@ def iqc_url_to_local_file(url):
 
     target_file = string.replace(url, '/', '_') + '.html'
 
+    try:
+        os.makedirs(iqc_working_directory)
+    
+    except Exception, e:
+        if e.errno != errno.EEXIST:
+            printf('iqc_url_to_local_file mkdir exception: !!')
+            traceback.print_exc()
+
     target_file = iqc_working_directory + '/' + target_file
 
     return target_file
@@ -38,9 +50,11 @@ def iqc_url_to_local_file(url):
 
 def iqc_dump_list_page(url, referer = ''):
 
+    printf("iqc_dump_list_page: url = %s " ,url)
+
     target_file = iqc_url_to_local_file(url)
 
-    print 'dump %s to target_file:%s , referer:%s' % (url, target_file, referer)
+    printf('dump %s to target_file: %s , referer: %s', url, target_file, referer)
     # Fetch html page
     html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file, referer)
    
@@ -60,14 +74,16 @@ def iqc_dump_main_category(main_cat_dict):
             iqc_dump_sub_category(url, main_cat, sub_cat)
 
     except Exception, e:
-        print 'iqc_dump_main_category exception: !!'
+        printf('iqc_dump_main_category exception: !!')
         traceback.print_exc()
 
 
 
 def iqc_dump_sub_category(url, main_cat, sub_cat):
 
-    print "\n==> Start to parse category url: %s, main_cat: %s, sub_cat: %s ..." % (url, main_cat, sub_cat)
+    printf("\n==> Start to parse category url: %s, main_cat: %s, sub_cat: %s ...", url, main_cat, sub_cat)
+
+    global iqc_working_directory
 
     # Category with Referer
     #url = 'http://iqc.com.tw/List/2/'
@@ -75,7 +91,9 @@ def iqc_dump_sub_category(url, main_cat, sub_cat):
     #referer = 'http://iqc.com.tw/List/0/1/61'
 
     # Return here for debugging
-    return
+    #return
+    printf("List is %d", str.find(url, "List"))
+    iqc_working_directory = url[str.find(url, "List"):]
 
     html_text = iqc_dump_list_page(url)
 
@@ -97,7 +115,7 @@ def iqc_dump_sub_category(url, main_cat, sub_cat):
 
 def iqc_parse_commodity(barcode, ret = {}):
 
-    print "\n===> Start to dump barcode %s ..." % barcode
+    printf("\n===> Start to dump barcode %s ...", barcode)
 
     # http://iqc.com.tw/Commodities/Detail/176725
     url = 'http://iqc.com.tw/Commodities/Detail/' + barcode
@@ -123,7 +141,7 @@ def iqc_parse_commodity(barcode, ret = {}):
 
 def iqc_parse_list_file(list_file, db_name = 'test.db'):
     
-    print "\n==> Start to parse list file: %s ..." % list_file
+    printf("\n==> Start to parse list file: %s ...", list_file)
 
     if list_file != '':
         f = open( list_file , 'r' )
@@ -144,10 +162,10 @@ def iqc_parse_list_file(list_file, db_name = 'test.db'):
 
     for c in ret['link']:
         # /Commodities/Detail/171342
-        # print 'c=%s, type=%s, rindex of "/" is %d' % (str(c), str(type(c)), string.rindex(c, '/'))
+        # printf('c=%s, type=%s, rindex of "/" is %d', str(c), str(type(c)), string.rindex(c, '/'))
         try:
             barcode = c[string.rindex(c, '/')+1:]
-            print 'barcode: %s' % barcode
+            printf('barcode: %s', barcode)
             if (barcode is not None) and (barcode != ''):
                 commodity = {'barcode' : barcode}
                 commodity = iqc_parse_commodity(barcode, commodity)
@@ -158,7 +176,7 @@ def iqc_parse_list_file(list_file, db_name = 'test.db'):
                 break # dump leading 3 only because we're still debugging
 
         except Exception, e:
-            print "Parse commodity fails ..." 
+            printf("Parse commodity fails ...")
             traceback.print_exc()
         finally:
             # Sleep for a while to avoid busy accessing
@@ -175,10 +193,14 @@ def iqc_parse_list_file(list_file, db_name = 'test.db'):
 
     return
 
+
+
 def iqc_parse_list_dir(list_dir):
 
-    print "\n=> Start to parse list pages in current directory: %s ..." % list_dir
+    printf("\n=> Start to parse list pages in current directory: %s ...", list_dir)
 
+    global iqc_working_directory
+    
     iqc_working_directory = list_dir
 
     all_files = []
@@ -186,13 +208,13 @@ def iqc_parse_list_dir(list_dir):
     root = ''
 
     for root, dirs, files in os.walk(list_dir):
-        print "root is %s, dirs is %s, files is %s" % (root, str(dirs), str(files))
+        printf("root is %s, dirs is %s, files is %s", root, str(dirs), str(files))
         if list_dir == root:
             all_files = files
             break
 
     for f in all_files:
-        print "f is %s" % f
+        printf("f is %s", f)
         try:
             if f.startswith('iqc.com.tw_List'):
                 iqc_parse_list_file(os.path.join(root, f), db_name)
@@ -221,7 +243,7 @@ def print_usage(cmd):
             Print this usage
     '''
 
-    print ('\n%s usage: ' + usage) % cmd
+    printf(('\n%s usage: ' + usage), cmd)
     return
 
 
@@ -234,11 +256,11 @@ def main(argv):
     parse_list_dir = None
 
     try:
-        #print " argv=%s" % str(argv)
+        #printf(" argv=%s", str(argv))
         opts, other_args = getopt.getopt(argv[1:],"m:sf:d:",["parse-main-category=", "parse-sub-category", "parse-list-file=", "parse-list-dir="])
 
     except getopt.GetoptError:
-        print "getopt.GetoptError: "
+        printf("getopt.GetoptError: ")
         traceback.print_exc()
         print_usage(argv[0])
         sys.exit(-1)
@@ -253,7 +275,7 @@ def main(argv):
         elif opt in ("-d", "--parse-list-dir"):
             parse_list_dir = arg            # dir (string)
 
-    if not parse_main_category and not parse_sub_category and not parse_list_file and not parse_list_dir:
+    if parse_main_category is None and parse_sub_category is None and parse_list_file is None and parse_list_dir is None:
         print_usage(argv[0])
         sys.exit()
 
@@ -297,7 +319,7 @@ if __name__ == '__main__':
             iqc_parse_list_dir(parse_list_dir)
             pass
 
-        print "done"
+        printf("done")
         sys.exit(0)
 
     except Exception, e:
