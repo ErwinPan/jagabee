@@ -5,6 +5,7 @@ import StringIO
 import traceback
 import sys, getopt
 import re
+import iqc_categories
 import iqc_parse_pages
 import jagabee_pycurl
 import jagabee_sqlite3
@@ -46,14 +47,35 @@ def iqc_dump_list_page(url, referer = ''):
     return html_text
 
 
-def iqc_dump_category(url):
 
-    print "\n==> Start to parse category url: %s ..." % url
+def iqc_dump_main_category(main_cat_dict):
+
+    try:
+        main_cat = main_cat_dict['main_cat']
+        sub_cats = main_cat_dict['sub_cats']
+
+        for sub_cat_dict in sub_cats:
+            url = 'http://iqc.com.tw/' + sub_cat_dict['url']
+            sub_cat = sub_cat_dict['sub_cat']
+            iqc_dump_sub_category(url, main_cat, sub_cat)
+
+    except Exception, e:
+        print 'iqc_dump_main_category exception: !!'
+        traceback.print_exc()
+
+
+
+def iqc_dump_sub_category(url, main_cat, sub_cat):
+
+    print "\n==> Start to parse category url: %s, main_cat: %s, sub_cat: %s ..." % (url, main_cat, sub_cat)
 
     # Category with Referer
     #url = 'http://iqc.com.tw/List/2/'
     #referer = 'http://iqc.com.tw/List/1/'
     #referer = 'http://iqc.com.tw/List/0/1/61'
+
+    # Return here for debugging
+    return
 
     html_text = iqc_dump_list_page(url)
 
@@ -99,7 +121,7 @@ def iqc_parse_commodity(barcode, ret = {}):
 
     return ret
 
-def iqc_parse_list_file(list_file):
+def iqc_parse_list_file(list_file, db_name = 'test.db'):
     
     print "\n==> Start to parse list file: %s ..." % list_file
 
@@ -144,7 +166,7 @@ def iqc_parse_list_file(list_file):
             pass
 
    
-    jagabee_sqlite3.db_save_products(list_dump['commodities'])
+    jagabee_sqlite3.db_save_products(list_dump['commodities'], db_name)
 
     # Save to a dictionary file and export to database in the future (not a good idea because saved string is not human readable, e.g: u'1234)
     #f = open( list_dump_file , 'wb' )
@@ -160,6 +182,7 @@ def iqc_parse_list_dir(list_dir):
     iqc_working_directory = list_dir
 
     all_files = []
+    db_name = list_dir + '/products.db'
     root = ''
 
     for root, dirs, files in os.walk(list_dir):
@@ -172,7 +195,7 @@ def iqc_parse_list_dir(list_dir):
         print "f is %s" % f
         try:
             if f.startswith('iqc.com.tw_List'):
-                iqc_parse_list_file(os.path.join(root, f))
+                iqc_parse_list_file(os.path.join(root, f), db_name)
 
             pass
 
@@ -186,8 +209,10 @@ def iqc_parse_list_dir(list_dir):
 
 def print_usage(cmd):
     usage = '''
-        -c, --parse-category
-            Parse category
+        -m, --parse-main-category
+            Parse main category
+        -s, --parse-sub-category
+            Parse sub category
         -l, --parse-list-file=FILE
             Parse a list file
         -d, --parse-list-dir=DIR
@@ -203,13 +228,14 @@ def print_usage(cmd):
 
 def main(argv):
 
-    parse_category = None
+    parse_main_category = None
+    parse_sub_category = None
     parse_list_file = None
     parse_list_dir = None
 
     try:
         #print " argv=%s" % str(argv)
-        opts, other_args = getopt.getopt(argv[1:],"cf:d:",["parse-category=", "parse-list-file=", "parse-list-dir="])
+        opts, other_args = getopt.getopt(argv[1:],"msf:d:",["parse-main-category", "parse-sub-category", "parse-list-file=", "parse-list-dir="])
 
     except getopt.GetoptError:
         print "getopt.GetoptError: "
@@ -218,31 +244,49 @@ def main(argv):
         sys.exit(-1)
 
     for opt, arg in opts:
-        if opt in ("-c", "--parse-category"):
-            parse_category = True
+        if opt in ("-m", "--parse-main-category"):
+            parse_main_category = True
+        elif opt in ("-c", "--parse-sub-category"):
+            parse_sub_category = True
         elif opt in ("-f", "--parse-list-file"):
             parse_list_file = arg
         elif opt in ("-d", "--parse-list-dir"):
             parse_list_dir = arg
 
-    if not parse_category and not parse_list_file and not parse_list_dir:
+    if not parse_main_category and not parse_sub_category and not parse_list_file and not parse_list_dir:
         print_usage(argv[0])
         sys.exit()
 
-    return parse_category, parse_list_file, parse_list_dir
+    return parse_main_category, parse_sub_category, parse_list_file, parse_list_dir
 
 
 
 if __name__ == '__main__':
     try:
 
-        parse_category, parse_list_file, parse_list_dir = main(sys.argv) 
-        
+        parse_main_category, parse_sub_category, parse_list_file, parse_list_dir = main(sys.argv) 
 
-        if parse_category is not None:
-            # Define Root Category Entry
-            url = 'http://iqc.com.tw/List/0/1/61'
-            iqc_dump_category(url)
+
+        if parse_main_category is not None:
+            # Define Main Category Entry
+
+            iqc_dump_main_category(iqc_categories.all_categories[0])
+            pass
+
+        if parse_sub_category is not None:
+            # Define Sub Category Entry
+
+            if False:
+                url = 'http://iqc.com.tw/List/0/1/61'
+                main_cat = '飲品零食'
+                sub_cat = '水'
+            else:
+                url_postfix = iqc_categories.all_categories[0]['sub_cats'][0]['url']
+                url = 'http://iqc.com.tw/' + url_postfix
+                main_cat = iqc_categories.all_categories[0]['main_cat']
+                sub_cat = iqc_categories.all_categories[0]['sub_cats'][0]['sub_cat']
+
+            iqc_dump_sub_category(url, main_cat, sub_cat)
             pass
 
         if parse_list_file is not None:
