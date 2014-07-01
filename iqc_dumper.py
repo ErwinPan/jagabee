@@ -209,8 +209,8 @@ def iqc_parse_list_dir(list_dir):
 
 def print_usage(cmd):
     usage = '''
-        -m, --parse-main-category
-            Parse main category
+        -m, --parse-main-category=N
+            Parse main category (index = N)
         -s, --parse-sub-category
             Parse sub category
         -l, --parse-list-file=FILE
@@ -235,7 +235,7 @@ def main(argv):
 
     try:
         #print " argv=%s" % str(argv)
-        opts, other_args = getopt.getopt(argv[1:],"msf:d:",["parse-main-category", "parse-sub-category", "parse-list-file=", "parse-list-dir="])
+        opts, other_args = getopt.getopt(argv[1:],"m:sf:d:",["parse-main-category=", "parse-sub-category", "parse-list-file=", "parse-list-dir="])
 
     except getopt.GetoptError:
         print "getopt.GetoptError: "
@@ -245,13 +245,13 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ("-m", "--parse-main-category"):
-            parse_main_category = True
+            parse_main_category = int(arg)       # index of main category (int)
         elif opt in ("-c", "--parse-sub-category"):
             parse_sub_category = True
         elif opt in ("-f", "--parse-list-file"):
-            parse_list_file = arg
+            parse_list_file = arg           # file (string)
         elif opt in ("-d", "--parse-list-dir"):
-            parse_list_dir = arg
+            parse_list_dir = arg            # dir (string)
 
     if not parse_main_category and not parse_sub_category and not parse_list_file and not parse_list_dir:
         print_usage(argv[0])
@@ -270,7 +270,7 @@ if __name__ == '__main__':
         if parse_main_category is not None:
             # Define Main Category Entry
 
-            iqc_dump_main_category(iqc_categories.all_categories[0])
+            iqc_dump_main_category(iqc_categories.all_categories[ parse_main_category ])
             pass
 
         if parse_sub_category is not None:
