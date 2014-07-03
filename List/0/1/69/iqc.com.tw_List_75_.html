@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="ctl00_Head1"><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="description" lang="zh-Hant-TW" content="食品安全資訊透明呈現，創造消費者信賴的品牌，收錄國內外商品的檢驗報告，並隨時要求廠商更新報告，提供民眾搜尋，與使用手機 APP 查詢商品即可查出是否通過檢驗合格。" /><meta name="news_keywords" content="商品安全,刊登" /><title>
+	
+       iQC商品安全資訊網
+
+</title><link href="../../CSS/cssStyle.css" rel="stylesheet" type="text/css" /><link href="../../CSS/default/default.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="/Scripts/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.nivo.slider.js"></script>
+    <script type="text/javascript" src="/Scripts/frontScript.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.tooltip.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#txtKeySearch").focus(function (e) {
+                $(this).val("");
+            });
+
+            $(".btnQuery").click(function () {
+                if ($("#txtKeySearch").val() == "Enter Search Term")
+                    $("#txtKeySearch").val("");
+                $(this).parent().submit();
+                return false;
+            });
+
+            var url = window.location.pathname.toLowerCase();
+            if (url.indexOf('/detail/') >= 0 || url.indexOf('/report/') >= 0) {
+                $(".middleContainer").addClass("middleContainerGray");
+                $(".middleContainer").removeClass("middleContainer");
+            }
+
+            $("#txtKeySearch").keyup(function (e) {
+                if (e.keyCode == 13) {
+                    if ($("#txtKeySearch").val() == "Enter Search Term")
+                        $("#txtKeySearch").val("");
+                    $(this).parent().submit();
+                }
+                return false;
+            });
+
+        });
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-33309827-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+</head>
+<body>
+    <div id="headerContainer">
+        <div class="header">
+            <div class="left">
+                <a href="/" class="logo" title="商品安全資訊網"></a>
+            </div>
+            <div class="right">
+                <div class="links">
+                    <a href="/ContactUs/" class="contact" title="contact"></a>
+                    <a href="/Page/26/Sitemap" class="sitemap" title="sitemap"></a>
+                    <a href="https://www.facebook.com/pages/iQC%E5%95%86%E5%93%81%E5%AE%89%E5%85%A8%E9%A9%97%E8%AD%89%E8%B3%87%E8%A8%8A%E7%B6%B2/394012890651050?ref=hl" target="_blank" class="facebook" title="facebook"></a>
+                    <a href="http://www.plurk.com/iqc" target="_blank" class="plurk" title="plurk"></a>
+                    <a href="https://twitter.com/iqctw" target="_blank" class="twitter" title="twitter"></a>
+                </div>
+                <div class="navi">
+                    <ul>
+                        <li><a href="/List/0/1" class="subnavi01"  title="飲品零食"></a></li>
+                        <li><a href="/List/0/2" class="subnavi02"  title="生鮮肉類"></a></li>
+                        <li><a href="/List/0/3" class="subnavi03"  title="雜糧蔬果"></a></li>
+                        <li><a href="/List/0/4" class="subnavi04"  title="加工食品"></a></li>
+                        <li><a href="/List/0/5" class="subnavi05"  title="機能食品"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="searchContainer">
+            <div class="search">
+                <div class="slogan" title="information of quality control">
+                </div>
+                <div class="query">
+                    <form action="/AdvancedSearch" method="post">
+                    <input type="hidden" id="SearchMode" name="SearchMode" value="2" />
+                    <input type="text" style="display:none;" />
+                    <input id="txtKeySearch" name="SearchKeyword" type="text" value="Enter Search Term" /><a
+                        href="javascript:void();" class="btnQuery" title="query"></a><a href="/AdvancedSearch/"
+                            class="advanceQuery" title="進階搜尋"></a><a href="javascript:void();" class="queryQuestion"
+                                title="依照認證、營養標示等搜尋商品"></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="middleContainer">
+        <!--**中間內容**-->
+        
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input[name=SearchAppend]").change(function (e) {
+                $("#SearchMode").val($(this).val());
+            });
+        });
+    </script>
+    <!--左側分類 begin-->
+    <div class="leftNavi">
+        <img src="/images/category.png" />
+        <img src="/images/queryTitle.png" />
+        <ul class="queryStrategy">
+            
+        </ul>
+        
+<div class="subNavi">
+    <img src="/images/leftTitle01.png" />
+    
+    <ul>
+        
+        <li><a href="/List/0/1/54">
+            水</a></li>
+        
+        <li><a href="/List/0/1/57">
+            茶飲料</a></li>
+        
+        <li><a href="/List/0/1/60">
+            咖啡</a></li>
+        
+        <li><a href="/List/0/1/61">
+            汽水</a></li>
+        
+        <li><a href="/List/0/1/62">
+            果汁</a></li>
+        
+        <li><a href="/List/0/1/59">
+            醋(飲料)</a></li>
+        
+        <li><a href="/List/0/1/56">
+            穀糧飲料</a></li>
+        
+        <li><a href="/List/0/1/119">
+            乳酸飲料</a></li>
+        
+        <li><a href="/List/0/1/120">
+            運動飲料</a></li>
+        
+        <li><a href="/List/0/1/63">
+            其他飲料</a></li>
+        
+        <li><a href="/List/0/1/58">
+            酒</a></li>
+        
+        <li><a href="/List/0/1/122">
+            乳製品</a></li>
+        
+        <li><a href="/List/0/1/64">
+            冰品</a></li>
+        
+        <li><a href="/List/0/1/65">
+            餅乾</a></li>
+        
+        <li><a href="/List/0/1/66">
+            糖果</a></li>
+        
+        <li><a href="/List/0/1/67">
+            布丁果凍</a></li>
+        
+        <li><a href="/List/0/1/68">
+            其它零食</a></li>
+        
+        <li><a href="/List/0/1/69">
+            麵包糕餅</a></li>
+        
+    </ul>
+    
+    <hr />
+</div>
+<div class="subNavi">
+    <img src="/images/leftTitle02.png" />
+    
+    <ul>
+        
+        <li><a href="/List/0/2/123">
+            牛肉</a></li>
+        
+        <li><a href="/List/0/2/70">
+            豬肉</a></li>
+        
+        <li><a href="/List/0/2/72">
+            羊肉</a></li>
+        
+        <li><a href="/List/0/2/71">
+            其他畜肉</a></li>
+        
+        <li><a href="/List/0/2/74">
+            禽肉</a></li>
+        
+        <li><a href="/List/0/2/73">
+            禽蛋</a></li>
+        
+        <li><a href="/List/0/2/75">
+            鮮魚類</a></li>
+        
+        <li><a href="/List/0/2/126">
+            貝介蝦蟹</a></li>
+        
+        <li><a href="/List/0/2/77">
+            其他水產</a></li>
+        
+        <li><a href="/List/0/2/76">
+            海菜</a></li>
+        
+    </ul>
+    
+    <hr />
+</div>
+<div class="subNavi">
+    <img src="/images/leftTitle03.png" />
+    
+    <ul>
+        
+        <li><a href="/List/0/3/78">
+            米類</a></li>
+        
+        <li><a href="/List/0/3/79">
+            麥類</a></li>
+        
+        <li><a href="/List/0/3/82">
+            雜糧類</a></li>
+        
+        <li><a href="/List/0/3/84">
+            堅果類</a></li>
+        
+        <li><a href="/List/0/3/127">
+            豆類及豆菜類</a></li>
+        
+        <li><a href="/List/0/3/128">
+            蔬菜類</a></li>
+        
+        <li><a href="/List/0/3/129">
+            水果類</a></li>
+        
+        <li><a href="/List/0/3/130">
+            茶葉</a></li>
+        
+        <li><a href="/List/0/3/131">
+            菇類</a></li>
+        
+    </ul>
+    
+    <hr />
+</div>
+<div class="subNavi">
+    <img src="/images/leftTitle04.png" />
+    
+    <ul>
+        
+        <li><a href="/List/0/4/169">
+            順丁烯二酸專區</a></li>
+        
+        <li><a href="/List/0/4/89">
+            罐頭食品</a></li>
+        
+        <li><a href="/List/0/4/90">
+            真空包裝食品</a></li>
+        
+        <li><a href="/List/0/4/91">
+            冷凍食品</a></li>
+        
+        <li><a href="/List/0/4/92">
+            果醬餡料</a></li>
+        
+        <li><a href="/List/0/4/142">
+            素食</a></li>
+        
+        <li><a href="/List/0/4/94">
+            蜂製品</a></li>
+        
+        <li><a href="/List/0/4/93">
+            加工蔬果雜糧</a></li>
+        
+        <li><a href="/List/0/4/95">
+            加工蛋製品</a></li>
+        
+        <li><a href="/List/0/4/96">
+            加工肉製品</a></li>
+        
+        <li><a href="/List/0/4/97">
+            加工水產品</a></li>
+        
+        <li><a href="/List/0/4/98">
+            加工豆類食品</a></li>
+        
+        <li><a href="/List/0/4/99">
+            其他加工食品</a></li>
+        
+        <li><a href="/List/0/4/100">
+            麵粉及麵製品</a></li>
+        
+        <li><a href="/List/0/4/101">
+            其他粉類及粉製品</a></li>
+        
+        <li><a href="/List/0/4/102">
+            油脂</a></li>
+        
+        <li><a href="/List/0/4/103">
+            鹽類</a></li>
+        
+        <li><a href="/List/0/4/104">
+            糖類</a></li>
+        
+        <li><a href="/List/0/4/143">
+            調味料與醬料</a></li>
+        
+        <li><a href="/List/0/4/144">
+            其他食品原料</a></li>
+        
+        <li><a href="/List/0/4/146">
+            中藥材</a></li>
+        
+        <li><a href="/List/0/4/145">
+            食品添加物</a></li>
+        
+    </ul>
+    
+    <hr />
+</div>
+<div class="subNavi">
+    <img src="/images/leftTitle05.png" />
+    
+    <ul>
+        
+        <li><a href="/List/0/5/132">
+            嬰兒食品</a></li>
+        
+        <li><a href="/List/0/5/133">
+            膠囊食品</a></li>
+        
+        <li><a href="/List/0/5/134">
+            錠狀食品</a></li>
+        
+        <li><a href="/List/0/5/135">
+            粉狀食品</a></li>
+        
+        <li><a href="/List/0/5/136">
+            特殊營養食品</a></li>
+        
+        <li><a href="/List/0/5/137">
+            藻類製品</a></li>
+        
+        <li><a href="/List/0/5/138">
+            紅麴製品</a></li>
+        
+        <li><a href="/List/0/5/139">
+            魚油製品</a></li>
+        
+        <li><a href="/List/0/5/140">
+            卵磷脂製品</a></li>
+        
+        <li><a href="/List/0/5/141">
+            其他機能食品</a></li>
+        
+    </ul>
+    
+</div>
+
+    </div>
+    <!--左側分類 end-->
+    <!--右側內容 begin-->
+    <div class="rightContent">
+        <div class="queryButtonList">
+            <input id="SearchAppend1" name="SearchAppend" type="radio" value="1" /><label for="SearchAppend1">從目前結果再查詢</label>
+            <input id="SearchAppend2" name="SearchAppend" type="radio" checked="checked" value="2" /><label for="SearchAppend2">重新查詢</label></div>
+        <div class="searchInfo">
+            SHOWING ITEMS <b>1801 - 1824</b> of 7123</div>
+        <div class="searchItemList">
+            
+            <ul>
+                
+                <li>
+		    <a href="/Commodities/Detail/1321">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="糖村蜂蜜蛋糕+蜂蜜蛋糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1321">糖村蜂蜜蛋糕+蜂蜜蛋糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1325">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="糖村巧克力雪餅4入" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1325">糖村巧克力雪餅4入</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1329">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮企業股份有限公司蘿蔔糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1329">梅花長榮企業股份有限公司蘿蔔糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1339">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮企業股份有限公司台式芋頭糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1339">梅花長榮企業股份有限公司台式芋頭糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1343">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮椰子年糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1343">梅花長榮椰子年糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1347">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮椰子年糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1347">梅花長榮椰子年糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1351">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮黑糖年糕(彩盒裝)" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1351">梅花長榮黑糖年糕(彩盒裝)</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1355">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮黑糖年糕(彩盒裝)" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1355">梅花長榮黑糖年糕(彩盒裝)</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1359">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="梅花長榮港式蘿蔔糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1359">梅花長榮港式蘿蔔糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1363">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="進口馬鈴薯製品美國極佳級四角薯餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1363">進口馬鈴薯製品美國極佳級四角薯餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1367">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="金御園千層蔥抓餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1367">金御園千層蔥抓餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1371">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="金御園雞肉餡餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1371">金御園雞肉餡餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1375">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="金御園手工蔥抓餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1375">金御園手工蔥抓餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1379">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="手工蔥抓餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1379">手工蔥抓餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1383">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="烘焙客無糖南瓜年糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1383">烘焙客無糖南瓜年糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1387">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="烘焙客全麥饅頭" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1387">烘焙客全麥饅頭</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1391">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="HomeBake(宏遠)蔥油餅" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1391">HomeBake(宏遠)蔥油餅</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1395">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="民弘達蓮蓉包子" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1395">民弘達蓮蓉包子</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1399">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="民弘達全麥饅頭" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1399">民弘達全麥饅頭</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1405">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="昌黎黑糖糕" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1405">昌黎黑糖糕</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1409">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="泰揚核桃棗-400公克" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1409">泰揚核桃棗-400公克</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1413">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="奧可立芝麻球" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1413">奧可立芝麻球</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1418">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="五味蛋餅皮" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1418">五味蛋餅皮</a></h4>
+                </li>
+                
+                <li>
+		    <a href="/Commodities/Detail/1422">
+                    <img src="/images/Commodity/CommodityNoLogo.jpg" title="四方鮮乳鮮奶饅頭" height="160" width="160" />
+		    </a>
+                    <h4><a href="/Commodities/Detail/1422">四方鮮乳鮮奶饅頭</a></h4>
+                </li>
+                
+            </ul>
+            
+            <br class="clear" />
+            <div class="pageList">
+                <a href="/List/74/" class="btnPrev" title="前往上一頁">PREV</a><a href="/List/65/" class="btnPrev10" title="前往上十頁"><b class="prev"></b></a><a href="/List/74/" class="btnNumber" title="前往第75頁"> ... </a><a class="btnNumber" style="color:#22b8ce; text-decoration:none;">76</a> <a href="/List/76/" class="btnNumber" title="前往第77頁">77</a> <a href="/List/77/" class="btnNumber" title="前往第78頁">78</a> <a href="/List/78/" class="btnNumber" title="前往第79頁">79</a> <a href="/List/79/" class="btnNumber" title="前往第80頁">80</a> <a href="/List/80/" class="btnNumber" title="前往第81頁"> ... </a><a href="/List/296/" class="btnNumber" title="前往第297頁">297</a><a href="/List/85/" class="btnNext10" title="前往下十頁"><b class="next"></b></a><a href="/List/76/" class="btnNext" title="前往下一頁">NEXT</a>
+            </div>
+        </div>
+    </div>
+    <!--右側內容 end-->
+
+        <!--**中間內容**-->
+    </div>
+    <div id="footerContainer">
+        <div class="links">
+            <p><img src="/upload/iQC熱門商家(2014-04-14_045803).png" alt="" usemap="#Map" /> <map name="Map"> 
+<area shape="rect" coords="50,139,170,289" href="http://iqc.com.tw/Page/109/磐石國際行銷有限公司" target="_blank" />
+ 
+<area shape="rect" coords="180,139,305,302" href="http://iqc.com.tw/Page/107/必盛氏漢補養生食品有限公司" target="_blank" />
+ 
+<area shape="rect" coords="315,136,447,297" href="http://iqc.com.tw/Page/116/康富生技中心股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="463,146,565,297" href="http://tw.mall.yahoo.com/search?m=list&amp;sid=decobox&amp;ccatid=1&amp;path=1" target="_blank" />
+ 
+<area shape="rect" coords="588,144,695,299" href="http://iqc.com.tw/Page/115/醄醴有限公司" target="_blank" />
+ 
+<area shape="rect" coords="730,146,830,352" href="http://iqc.com.tw/Page/113/至茂企業股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="858,144,975,274" href="http://iqc.com.tw/Page/111/碧莎蕾藥品實業有限公司" target="_blank" />
+ 
+<area shape="rect" coords="855,6,973,134" href="http://iqc.com.tw/Page/110/天素食品有限公司" target="_blank" />
+ 
+<area shape="rect" coords="728,11,828,138" href="http://iqc.com.tw/Page/106/中立食品" target="_blank" />
+ 
+<area shape="rect" coords="587,11,692,138" href="http://iqc.com.tw/Page/112/森岳股份有限公司" target="_blank" />
+ 
+<area shape="rect" coords="462,14,560,141" href="http://www.run.com.tw/" target="_blank" />
+ 
+<area shape="rect" coords="312,4,447,131" href="http://www.hightea.com.tw/" target="_blank" />
+ 
+<area shape="rect" coords="183,14,300,131" href="http://iqc.com.tw/Page/108/尚好堅果" target="_blank" />
+ 
+<area shape="rect" coords="42,12,175,131" href="http://www.shaomei.com.tw/" target="_blank" />
+ </map></p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="19%">
+<h4>關於我們</h4>
+<ul>
+<li><a href="/Page/33/About">檢驗報告平台簡介</a></li>
+<li><a href="/Page/61/mov">雲端品保影片</a></li>
+<li><a href="/Page/64/Services">食品安全特色服務</a></li>
+<li><a href="/Page/62/Activity">媒體活動曝光</a></li>
+<li><a href="http://www.104.com.tw/jobbank/custjob/index.php?r=cust&amp;j=40424a733c3e466f383a426b40463e219313131744864467109j48&amp;jobsource=checkc" target="_self">人才招募</a></li>
+<li><a href="/contactUs">聯繫我們</a></li>
+</ul>
+</td>
+<td width="16%">
+<h4>事件追蹤</h4>
+<ul>
+<li><a href="/Page/72/%E4%B8%8D%E5%90%AB%E9%A0%86%E4%B8%81%E7%83%AF%E4%BA%8C%E9%85%B8%E5%95%86%E5%93%81">食品安全順丁烯二酸</a></li>
+<li><a href="/Page/90/CopperChlorophyll">食品安全混油事件</a></li>
+</ul>
+</td>
+<td width="12%">
+<h4>幫助中心</h4>
+<ul>
+<li><a href="/Page/29/links">友善連結</a></li>
+<li><a href="/Page/26/Sitemap">網站地圖</a></li>
+<li><a href="/Page/28/faq">常見問題</a></li>
+</ul>
+</td>
+<td width="20%">
+<h4>法律顧問</h4>
+<ul>
+<li><a href="/Page/30/privacy">隱私權保護政策</a></li>
+<li><a href="/Page/27/copyright">雲端報告商務版權</a></li>
+<li><a href="/Page/36/Audit">檢驗報告審核規範</a></li>
+<li><a href="/Page/37/Use">檢驗報告使用規範</a></li>
+</ul>
+</td>
+<td width="19%">
+<h4>服務內容</h4>
+<ul>
+<li><a href="/Page/41/Buy">食品團購檢驗</a></li>
+<li><a href="/Page/63/RSS_email">食品安全月刊</a></li>
+<li><a href="/Page/53/Register-1">檢驗報告刊登流程</a></li>
+<li><a href="/Page/35/Download">檢驗報告上架</a></li>
+<li><a href="http://discuz.iqc.com.tw/forum.php" target="_blank">食品安全社群討論</a></li>
+<li><a href="/Page/32/App">iQC手機App下載</a></li>
+</ul>
+</td>
+<td align="right" width="14%"><a href="/Page/32/App"><img src="/images/footer/appStore.png" alt="" border="0" /></a>
+<div id="webutation-badge"><a id="webutation-link" href="http://www.webutation.net/go/review/iqc.com.tw">iqc.com.tw Webutation</a></div>
+<p><a style="text-decoration: none; display: inline-block; color: #333; text-align: center; font: 13px/16px arial,sans-serif; white-space: nowrap;" href="http://plus.google.com/107927766077574859603?prsrc=3" rel="publisher" target="_top"><span style="display: inline-block; font-weight: bold; vertical-align: top; margin-right: 5px; margin-top: 8px;">訂閱 iQC</span><span style="display: inline-block; vertical-align: top; margin-right: 15px; margin-top: 8px;">on</span> <img style="border: 0; width: 32px; height: 32px;" src="http://ssl.gstatic.com/images/icons/gplus-32.png" alt="Google+" /></a></p>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</td>
+</tr>
+</tbody>
+</table>
+        </div> 
+        <div class="copyright" title="科健商品驗證有限公司 Information of Quality Control Tel 02-2957-0080   Fax 02-2959-5426">
+    	<div class="logo"></div>
+        <div class="companyInfo">科健商品驗證有限公司 Information of Quality Control <br />Tel 02-2957-0080   Fax 02-2959-5426</div>
+        <div class="copyrightInfo">Copyright © 2012 iQC Co., Ltd</div>
+</div>
+    </div>
+</body>
+</html>
