@@ -198,6 +198,9 @@ def parse_commodity_page(html, ret={}):
 	ret['reserv_date'] = match[9]
 	ret['img_url'] = match[0]
 
+    if ret['img_url'] == "/images/Commodity/CommodityNoLogo.jpg":
+        ret['img_url'] = ""
+
 	print "commodity barcode=%s, reserv_date=%s, title=%s, img_url=%s" % (ret['barcode'], ret['reserv_date'], ret['title'], ret['img_url'])
 
     return ret
