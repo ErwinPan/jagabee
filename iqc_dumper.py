@@ -33,6 +33,7 @@ def iqc_url_to_local_file(url):
     elif url[0:8] == 'https://':
         url = url[8:]
 
+    url = string.replace(url, "//", "/")
     target_file = string.replace(url, '/', '_') + '.html'
 
     try:
@@ -43,7 +44,7 @@ def iqc_url_to_local_file(url):
             printf('iqc_url_to_local_file mkdir exception: !!')
             traceback.print_exc()
 
-    target_file = iqc_working_directory + '/' + target_file
+    target_file = os.path.join(iqc_working_directory, target_file)
 
     return target_file
 
@@ -139,7 +140,7 @@ def iqc_parse_commodity(barcode, ret = {}):
 
     return ret
 
-def iqc_parse_list_file(list_file, db_name = 'test.db'):
+def iqc_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
     
     printf("\n==> Start to parse list file: %s ...", list_file)
 
@@ -167,7 +168,7 @@ def iqc_parse_list_file(list_file, db_name = 'test.db'):
             barcode = c[string.rindex(c, '/')+1:]
             printf('barcode: %s', barcode)
             if (barcode is not None) and (barcode != ''):
-                commodity = {'barcode' : barcode}
+                commodity = {'barcode' : barcode, 'main_cat' : main_cat, 'sub_cat' : sub_cat}
                 commodity = iqc_parse_commodity(barcode, commodity)
                 list_dump['commodities'].append(commodity)
 
@@ -195,7 +196,7 @@ def iqc_parse_list_file(list_file, db_name = 'test.db'):
 
 
 
-def iqc_parse_list_dir(list_dir):
+def iqc_parse_list_dir(main_cat, sub_cat, list_dir):
 
     printf("\n=> Start to parse list pages in current directory: %s ...", list_dir)
 
@@ -204,7 +205,8 @@ def iqc_parse_list_dir(list_dir):
     iqc_working_directory = list_dir
 
     all_files = []
-    db_name = list_dir + '/products.db'
+    db_name = os.path.join(list_dir, "products.db")
+    printf("db_name = %s" % db_name)
     root = ''
 
     for root, dirs, files in os.walk(list_dir):
@@ -216,8 +218,8 @@ def iqc_parse_list_dir(list_dir):
     for f in all_files:
         printf("f is %s", f)
         try:
-            if f.startswith('iqc.com.tw_List'):
-                iqc_parse_list_file(os.path.join(root, f), db_name)
+            if f.startswith('iqc.com.tw_List') or f.startswith("iqc.com.tw__List"):
+                iqc_parse_list_file(main_cat, sub_cat, os.path.join(root, f), db_name)
 
             pass
 
@@ -252,12 +254,13 @@ def main(argv):
 
     parse_main_category = None
     parse_sub_category = None
+    parse_sub_category_dirs = None
     parse_list_file = None
     parse_list_dir = None
 
     try:
         #printf(" argv=%s", str(argv))
-        opts, other_args = getopt.getopt(argv[1:],"m:sf:d:",["parse-main-category=", "parse-sub-category", "parse-list-file=", "parse-list-dir="])
+        opts, other_args = getopt.getopt(argv[1:],"m:srf:d:",["parse-main-category=", "parse-sub-category", "parse-sub-category-dirs", "parse-list-file=", "parse-list-dir="])
 
     except getopt.GetoptError:
         printf("getopt.GetoptError: ")
@@ -270,23 +273,25 @@ def main(argv):
             parse_main_category = int(arg)       # index of main category (int)
         elif opt in ("-c", "--parse-sub-category"):
             parse_sub_category = True
+        elif opt in ("-r", "--parse-sub-category-dirs"):
+            parse_sub_category_dirs = True
         elif opt in ("-f", "--parse-list-file"):
             parse_list_file = arg           # file (string)
         elif opt in ("-d", "--parse-list-dir"):
             parse_list_dir = arg            # dir (string)
 
-    if parse_main_category is None and parse_sub_category is None and parse_list_file is None and parse_list_dir is None:
+    if parse_main_category is None and parse_sub_category is None and parse_sub_category_dirs is None and parse_list_file is None and parse_list_dir is None:
         print_usage(argv[0])
         sys.exit()
 
-    return parse_main_category, parse_sub_category, parse_list_file, parse_list_dir
+    return parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir
 
 
 
 if __name__ == '__main__':
     try:
 
-        parse_main_category, parse_sub_category, parse_list_file, parse_list_dir = main(sys.argv) 
+        parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir = main(sys.argv) 
 
 
         if parse_main_category is not None:
@@ -311,12 +316,33 @@ if __name__ == '__main__':
             iqc_dump_sub_category(url, main_cat, sub_cat)
             pass
 
+        if parse_sub_category_dirs is not None:
+            # Define Sub Category Entry
+
+            if True:
+                m = iqc_categories.all_categories[0]
+                s = iqc_categories.all_categories[0]['sub_cats'][7]
+
+                main_cat = m['main_cat']
+                sub_cat = s['sub_cat']
+                sub_cat_dir = "./" + s['url']
+        
+                printf ("parse_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+
+                iqc_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
+            else:
+                pass
+
         if parse_list_file is not None:
-            iqc_parse_list_file(parse_list_file)
+            main_cat = "飲品零食"
+            sub_cat = "汽水"
+            iqc_parse_list_file(main_cat, sub_cat, parse_list_file)
             pass
         
         if parse_list_dir is not None:
-            iqc_parse_list_dir(parse_list_dir)
+            main_cat = "飲品零食"
+            sub_cat = "汽水"
+            iqc_parse_list_dir(main_cat, sub_cat, parse_list_dir)
             pass
 
         printf("done")

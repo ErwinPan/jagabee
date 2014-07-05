@@ -42,7 +42,7 @@ def db_insert_rows(products, db_name):
     for p in products:
 
         # Transfer dict to row tuple
-        row = (p['barcode'], p['title'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
+        row = (p['barcode'], p['title'].encode('utf-8'), p['main_cat'].encode('utf-8'), p['sub_cat'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
 
         try:
             cur.execute('DELETE from products WHERE barcode=?', (row[0],))
@@ -54,7 +54,7 @@ def db_insert_rows(products, db_name):
 
         try:
 
-            cur.execute('INSERT INTO products VALUES (?,?,?,?,?,?,?,?)', row)
+            cur.execute('INSERT INTO products VALUES (?,?,?,?,?,?,?,?,?,?)', row)
             inserted_row_count += 1
 
         except sqlite3.Error, e:
@@ -62,7 +62,7 @@ def db_insert_rows(products, db_name):
             traceback.print_exc()
             pass
 
-    print 'db_insert_rows, inserted_row_count=%d' % inserted_row_count
+    print 'db_insert_rows, db_name = %s, inserted_row_count = %d' % (db_name, inserted_row_count)
 
     conn.commit()
     conn.close()
@@ -74,16 +74,18 @@ def db_insert_rows(products, db_name):
 def db_create(db_name):
 
     try:
+        #print "db_name=%s" % db_name
         conn = sqlite3.connect(db_name)
 
         cur = conn.cursor()
 
         # Create table
         cur.execute('''CREATE TABLE products
-                             (barcode text PRIMARY KEY, title text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
+                             (barcode text PRIMARY KEY, title text, main_cat text, sub_cat text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
 
     except sqlite3.OperationalError:
         #print 'sqlite3.OperationalError: insert fail due to table exist '
+        #traceback.print_exc()
         pass
 
     except Exception, e:
