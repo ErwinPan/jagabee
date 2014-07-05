@@ -216,7 +216,7 @@ def iqc_parse_list_dir(main_cat, sub_cat, list_dir):
             break
 
     for f in all_files:
-        printf("f is %s", f)
+        printf("parsing file: %s ...", f)
         try:
             if f.startswith('iqc.com.tw_List') or f.startswith("iqc.com.tw__List"):
                 iqc_parse_list_file(main_cat, sub_cat, os.path.join(root, f), db_name)
@@ -319,19 +319,33 @@ if __name__ == '__main__':
         if parse_sub_category_dirs is not None:
             # Define Sub Category Entry
 
-            if True:
+            if False:  # debug only
                 m = iqc_categories.all_categories[0]
-                s = iqc_categories.all_categories[0]['sub_cats'][7]
-
                 main_cat = m['main_cat']
+
+                s = m['sub_cats'][7]
                 sub_cat = s['sub_cat']
                 sub_cat_dir = "./" + s['url']
         
                 printf ("parse_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
-
                 iqc_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
+
             else:
-                pass
+
+                for m in iqc_categories.all_categories:
+                    
+                    main_cat = m['main_cat']
+                    printf ("parse main catetories ... %s", main_cat)
+
+                    for s in m['sub_cats']:
+
+                        sub_cat = s['sub_cat']
+                        sub_cat_dir = "./" + s['url']
+
+                        printf ("parse_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                        iqc_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
+
+            pass
 
         if parse_list_file is not None:
             main_cat = "飲品零食"
