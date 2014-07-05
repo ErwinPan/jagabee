@@ -62,7 +62,7 @@ def db_insert_rows(products, db_name):
             traceback.print_exc()
             pass
 
-    print 'db_insert_rows, db_name = %s, inserted_row_count = %d' % (db_name, inserted_row_count)
+    print 'db_insert_rows, db_name = %s , inserted_row_count = %d' % (db_name, inserted_row_count)
 
     conn.commit()
     conn.close()
