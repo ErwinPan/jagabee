@@ -173,8 +173,8 @@ def iqc_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
                 list_dump['commodities'].append(commodity)
 
             i += 1
-            if i >= 3:
-                break # dump leading 3 only because we're still debugging
+            #if i >= 3:
+            #    break # dump leading 3 only because we're still debugging
 
         except Exception, e:
             printf("Parse commodity fails ...")
