@@ -209,6 +209,10 @@ def iqc_parse_list_dir(main_cat, sub_cat, list_dir):
     printf("db_name = %s" % db_name)
     root = ''
 
+    if os.path.exists(db_name):
+        printf("db exists: %s , skip it", db_name)
+        return
+
     for root, dirs, files in os.walk(list_dir):
         printf("root is %s, dirs is %s, files is %s", root, str(dirs), str(files))
         if list_dir == root:
@@ -241,6 +245,8 @@ def print_usage(cmd):
             Parse a list file
         -d, --parse-list-dir=DIR
             Parse list files in a directory
+        -c, --collect-all-db
+            Collect all database into one
         -h, --help
             Print this usage
     '''
@@ -257,10 +263,11 @@ def main(argv):
     parse_sub_category_dirs = None
     parse_list_file = None
     parse_list_dir = None
+    collect_all_db = None
 
     try:
         #printf(" argv=%s", str(argv))
-        opts, other_args = getopt.getopt(argv[1:],"m:srf:d:",["parse-main-category=", "parse-sub-category", "parse-sub-category-dirs", "parse-list-file=", "parse-list-dir="])
+        opts, other_args = getopt.getopt(argv[1:],"m:srf:d:c",["parse-main-category=", "parse-sub-category", "parse-sub-category-dirs", "parse-list-file=", "parse-list-dir=", "collect-all-db"])
 
     except getopt.GetoptError:
         printf("getopt.GetoptError: ")
@@ -271,7 +278,7 @@ def main(argv):
     for opt, arg in opts:
         if opt in ("-m", "--parse-main-category"):
             parse_main_category = int(arg)       # index of main category (int)
-        elif opt in ("-c", "--parse-sub-category"):
+        elif opt in ("-s", "--parse-sub-category"):
             parse_sub_category = True
         elif opt in ("-r", "--parse-sub-category-dirs"):
             parse_sub_category_dirs = True
@@ -279,19 +286,21 @@ def main(argv):
             parse_list_file = arg           # file (string)
         elif opt in ("-d", "--parse-list-dir"):
             parse_list_dir = arg            # dir (string)
+        elif opt in ("-c", "--collect-all-db"):
+            collect_all_db = True
 
-    if parse_main_category is None and parse_sub_category is None and parse_sub_category_dirs is None and parse_list_file is None and parse_list_dir is None:
+    if parse_main_category is None and parse_sub_category is None and parse_sub_category_dirs is None and parse_list_file is None and parse_list_dir is None and collect_all_db is None:
         print_usage(argv[0])
         sys.exit()
 
-    return parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir
+    return parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db
 
 
 
 if __name__ == '__main__':
     try:
 
-        parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir = main(sys.argv) 
+        parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db = main(sys.argv) 
 
 
         if parse_main_category is not None:
@@ -357,6 +366,39 @@ if __name__ == '__main__':
             main_cat = "飲品零食"
             sub_cat = "汽水"
             iqc_parse_list_dir(main_cat, sub_cat, parse_list_dir)
+            pass
+
+        if collect_all_db is not None:
+
+            all_products_db = "all.db"
+
+            jagabee_sqlite3.db_create(all_products_db)
+
+            if False:
+                m = iqc_categories.all_categories[0]
+                main_cat = m['main_cat']
+
+                s = m['sub_cats'][7]
+                sub_cat = s['sub_cat']
+                sub_cat_dir = "./" + s['url']
+        
+                printf ("collect_all_db, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                jagabee_sqlite3.db_merge(sub_cat_dir + "/products.db", all_products_db)
+
+            else:
+                for m in iqc_categories.all_categories:
+                    
+                    main_cat = m['main_cat']
+                    printf ("parse main catetories ... %s", main_cat)
+
+                    for s in m['sub_cats']:
+
+                        sub_cat = s['sub_cat']
+                        sub_cat_dir = "./" + s['url']
+
+                        printf ("collect_all_db, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                        jagabee_sqlite3.db_merge(sub_cat_dir + "/products.db", all_products_db)
+
             pass
 
         printf("done")

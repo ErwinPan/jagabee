@@ -114,6 +114,45 @@ def db_save_products(products, db_name = 'test.db'):
     return inserted_row_count
 
 
+def db_merge(src_db, dest_db):
+
+    try:
+        print "insert into db %s from %s starts ..." % (dest_db, src_db)
+
+        conn = sqlite3.connect(dest_db)
+
+        cur = conn.cursor()
+
+        cur.execute("attach '" + src_db + "' as src_db")
+
+        # Insert all into dest_db_table
+        cur.execute("insert into products select * from src_db.products")
+
+        cur.execute("detach database src_db")
+
+        print "insert into db %s from %s done" % (dest_db, src_db)
+
+
+    except sqlite3.OperationalError:
+        print 'sqlite3.OperationalError: insert fail '
+        traceback.print_exc()
+        pass
+
+    except Exception, e:
+        print 'sqlite3.OperationalError: insert other fail '
+        traceback.print_exc()
+        return False
+
+    # Save (commit) the changes
+    conn.commit()
+
+    # We can also close the connection if we are done with it.
+    # Just be sure any changes have been committed or they will be lost.
+    conn.close()
+
+    return True
+
+
 if __name__ == '__main__':
     try:
 
