@@ -158,23 +158,29 @@ def parse_commodity_page(html, ret={}):
     # Parse , where re.findall returns a "list" of "str" (single capturing group)
     all_matches = re.findall( re.compile( '<td bgcolor=\"#ffffff\" valign=\"top\" align=\"center\" class=\"font09\" width=\"40%\"><br><a href=\"(.*?)\" target=\"_blank\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-
-        dump_match(match)
+        ret["img_url"] = match
+        #dump_match(match)
         break # only get first item from list
 
 
     # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
     all_matches = re.findall( re.compile( '<font color=\"#377EB3\" class=\"font09\">商品編號:</font>(.*?)<b>(.*?)<br><br>(.*?)</b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-        dump_match(match)
+        ret["barcode"] = match[1]
+        ret["title"] = match[2]
+        #dump_match(match)
         break # only get first item from list
 
     # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
     all_matches = re.findall( re.compile( '<b>市售價: (.*?)<s>(.*?)</s>(.*?), 馬上省下: <font color=\"#D32417\" style=\"font-family:Arial;\">(.*?)</font> 元<br><b>網路價 <font color=\"#D32417\" style=\"font-family:Arial;\">(.*?)</font> 元 </b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-        #print "commodity barcode=%s, reserv_date=%s, title=%s, img_url=%s" % (ret['barcode'], ret['reserv_date'], ret['title'], ret['img_url'])
-        dump_match(match)
+        ret["ori_price"] = match[1]
+        ret["price"] = match[4]
+        #dump_match(match)
         break # only get first item from list
+
+    print "commodity barcode=%s, title=%s, img_url=%s, price=%s, ori_price=%s" % (ret['barcode'], ret['title'], ret['img_url'], ret["price"], ret["ori_price"])
+
 
     return ret
 
