@@ -80,30 +80,30 @@ def parse_list_page(html, b_first_page, ret={}):
         all_matches = re.findall( re.compile( '<div class=\"searchInfo\">[\s]*SHOWING ITEMS(.*?)</b> of ([0-9]*)</div>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
 
         if type(all_matches).__name__ != 'list' or len(all_matches) == 0:
-	    print "Invalid all_matches: " + str(type(all_matches))
-	    ret['total_product_counts'] = 0
+            print "Invalid all_matches: " + str(type(all_matches))
+            ret['total_product_counts'] = 0
         else:
-	    #dump_match(all_matches)
-	    ret['total_product_counts'] = int(all_matches[0][1])
-	    print "ret['total_product_counts'] = " + str(ret['total_product_counts'])
-	
+            #dump_match(all_matches)
+            ret['total_product_counts'] = int(all_matches[0][1])
+            print "ret['total_product_counts'] = " + str(ret['total_product_counts'])
+        
 
     # Parse product list tag
     all_matches = re.findall( re.compile( '<div class=\"searchItemList\">[\s]*<ul>(.*?)</ul>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-	#print "len(match) = " + str(len(match))
-	#dump_match(match)
-	continue
+        #print "len(match) = " + str(len(match))
+        #dump_match(match)
+        continue
 
     if type(all_matches).__name__ != 'list' or len(all_matches) == 0:
-	print "Invalid all_matches: " + str(type(all_matches))
+        print "Invalid all_matches: " + str(type(all_matches))
         return ret
 
     # Check if we get <li>  </li> in the first match
     list_text = all_matches[0]
     if type(list_text).__name__ != 'str':
-	print "Invalid list_text" + type(list_text).__name__
-	return ret
+        print "Invalid list_text" + type(list_text).__name__
+        return ret
 
     #print "list_text = " + list_text
     #print "================================================="
@@ -126,21 +126,21 @@ def parse_list_page(html, b_first_page, ret={}):
     # Parse list_text into 'li' list, where re.findall will return a "list" composed of "str" (due to single capturing group "()")
     all_matches = re.findall( re.compile( '<li>(.*?)</li>' , flags=(re.IGNORECASE|re.DOTALL)) , list_text)
     for li_match in all_matches:
-	#print "len(li_match) = " + str(len(li_match))
-	#dump_match(li_match)
+        #print "len(li_match) = " + str(len(li_match))
+        #dump_match(li_match)
 
         if type(li_match).__name__ != 'str':
-	    continue
+            continue
 
         # Parse li tag, where re.findall will return a "list" composed of "str" (due to single capturing group "()")
-	href_matches = re.findall( re.compile( '<a href=\"(.*?)\">[\s]*<img' , flags=(re.IGNORECASE|re.DOTALL)) , li_match)
-	for href_match in href_matches:
+        href_matches = re.findall( re.compile( '<a href=\"(.*?)\">[\s]*<img' , flags=(re.IGNORECASE|re.DOTALL)) , li_match)
+        for href_match in href_matches:
             #dump_match(href_match)
-	    ret['link'].append(href_match)
-	    print "ret['link'][%d] = %s" % (count, ret['link'][count])
-	    count += 1
+            ret['link'].append(href_match)
+            print "ret['link'][%d] = %s" % (count, ret['link'][count])
+            count += 1
 
-	#print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
+        #print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
 
     return ret
 
@@ -154,7 +154,7 @@ def parse_commodities_page(html, ret={}):
         print "No BODY DATA"
         return ret
 
-    # Parse product tag, where re.findall will return a "list" composed of tuples (due to multiple capturing groups)
+    # Parse product tag, where re.findall will return a "list" of tuples (due to multiple capturing groups)
     all_matches = re.findall( re.compile( '<div class=\"description\">(.*?)<h3>[\s]*(.*?)</h3>(.*?)商家名稱：(.*?)<br(.*?)商家地址：(.*?)<br(.*?)聯絡電話：(.*?)[\s]*(.*?)商品網站：(.*?)<br' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
         #print "len(match) = " + str(len(match))
@@ -188,35 +188,35 @@ def parse_commodity_page(html, ret={}):
         print "No BODY DATA"
         return ret
 
-    # Parse product tag, where re.findall will return a "list" composed of tuples (due to multiple capturing groups)
+    # Parse product tag, where re.findall will return a "list" of tuples (due to multiple capturing groups)
     all_matches = re.findall( re.compile( '<div class="detailItemImg"><img src=\"(.*?)\"(.*?)<div class=\"description\">(.*?)<h3>(.*?)</h3>(.*?)產品條碼：(.*?)<br(.*?)製造產地：(.*?)<br(.*?)有效期限：(.*?)[\r\n]' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
-	#dump_match(match)
+        #dump_match(match)
 
-	ret['title'] = match[3]
-	ret['barcode'] = match[5]
-	ret['reserv_date'] = match[9]
-	ret['img_url'] = match[0]
+        ret['title'] = match[3]
+        ret['barcode'] = match[5]
+        ret['reserv_date'] = match[9]
+        ret['img_url'] = match[0]
 
     if ret['img_url'] == "/images/Commodity/CommodityNoLogo.jpg":
         ret['img_url'] = ""
 
-	print "commodity barcode=%s, reserv_date=%s, title=%s, img_url=%s" % (ret['barcode'], ret['reserv_date'], ret['title'], ret['img_url'])
+        print "commodity barcode=%s, reserv_date=%s, title=%s, img_url=%s" % (ret['barcode'], ret['reserv_date'], ret['title'], ret['img_url'])
 
     return ret
 
 
 if __name__ == '__main__':
     try:
-	# Read file
+        # Read file
         #f = open( 'http:__iqc.com.tw_Commodities_Detail_173160.html' , 'r' )
         f = open( 'http:__iqc.com.tw_Commodities_Detail_319464.html' , 'r' )
-    	#f = open( 'commodity_173185.html' , 'r' )
-    	#f = open( 'iqc.com.tw_List_0_1_61.html' , 'r' )
-	html_text = f.read()
-    	f.close()
+            #f = open( 'commodity_173185.html' , 'r' )
+            #f = open( 'iqc.com.tw_List_0_1_61.html' , 'r' )
+        html_text = f.read()
+            f.close()
 
-	# parse 
+        # parse 
         parse_commodities_page(html_text)
         #parse_commodity_page(html_text)
         #parse_list_page(html_text, True)
