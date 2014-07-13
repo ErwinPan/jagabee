@@ -69,6 +69,8 @@ def parse_list_page(html, b_first_page, ret={}):
     count = 0
     ret['link'] = []
     ret['total_product_counts'] = 0
+    if not ret.has_key("list_link"):
+        ret["list_link"]=[]
 
     body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
     #print "len(body) = " + str(len(body))
@@ -77,68 +79,43 @@ def parse_list_page(html, b_first_page, ret={}):
         return ret
 
     if b_first_page:
-        all_matches = re.findall( re.compile( '<div class=\"searchInfo\">[\s]*SHOWING ITEMS(.*?)</b> of ([0-9]*)</div>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+        # Return pages count area
+        header_text = ""
+        all_matches = re.findall( re.compile( '<td align=\"right\"><font color=\"#666666\" class=\"font09\">(.*?)</td>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+        #dump_match(all_matches)
+        for match in all_matches:
+            header_text = match
+            #print "[parse_list_page] header_text=%s" % header_text
+            break # only get first
 
-        if type(all_matches).__name__ != 'list' or len(all_matches) == 0:
-            print "Invalid all_matches: " + str(type(all_matches))
-            ret['total_product_counts'] = 0
+        if header_text == "":
+            print "[parse_list_page] No additional list pages"
         else:
+            # Return list page links
+            all_matches = re.findall( re.compile( '<a style=\"color:#666666;\" href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , header_text)
             #dump_match(all_matches)
-            ret['total_product_counts'] = int(all_matches[0][1])
-            print "ret['total_product_counts'] = " + str(ret['total_product_counts'])
-        
+            for match in all_matches:
+                ret["list_link"].append(match)
 
-    # Parse product list tag
-    all_matches = re.findall( re.compile( '<div class=\"searchItemList\">[\s]*<ul>(.*?)</ul>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    table_text = ""
+    all_matches = re.findall( re.compile( '<table border=\"0\" width=\"100%\" cellspacing=\"2\" cellpadding=\"6\" class=\"font09h15\">(.*)</tbody></table>[\s]*<style type=\"text/css\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    for match in all_matches:
+        table_text = match
+        dump_match(all_matches)
+        break # only get first item from list
+    
+    if table_text == "":
+        print "No Table exist"
+        return ret
+
+    # Parse table list which returns a list of "str"s
+    all_matches = re.findall( re.compile( '<a href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , table_text)
     for match in all_matches:
         #print "len(match) = " + str(len(match))
-        #dump_match(match)
+        ret["link"].append(match)
+        ret['total_product_counts'] += 1
+        dump_match(match)
         continue
-
-    if type(all_matches).__name__ != 'list' or len(all_matches) == 0:
-        print "Invalid all_matches: " + str(type(all_matches))
-        return ret
-
-    # Check if we get <li>  </li> in the first match
-    list_text = all_matches[0]
-    if type(list_text).__name__ != 'str':
-        print "Invalid list_text" + type(list_text).__name__
-        return ret
-
-    #print "list_text = " + list_text
-    #print "================================================="
-
-    test_text = '''
-                <li>
-                    <a href="http://iqc.com.tw/Commodities/Detail/173185">
-                    <img src="./iqc.com.tw_List_0_1_61_files/黑松沙士600.jpg" title="黑松沙士(PET600ml)" height="160" width="160">
-                    </a>
-                    <h4><a href="http://iqc.com.tw/Commodities/Detail/173185">黑松沙士(PET600ml)</a></h4>
-                </li>
-
-                <li>
-                    <a href="http://iqc.com.tw/Commodities/Detail/319465">
-                    <img src="./iqc.com.tw_List_0_1_61_files/黑松沙士.png" title="黑松沙士加鹽 600ml" height="160" width="160">
-                    </a>
-                    <h4><a href="http://iqc.com.tw/Commodities/Detail/319465">黑松沙士加鹽 600ml</a></h4>
-                </li>'''
-
-    # Parse list_text into 'li' list, where re.findall will return a "list" composed of "str" (due to single capturing group "()")
-    all_matches = re.findall( re.compile( '<li>(.*?)</li>' , flags=(re.IGNORECASE|re.DOTALL)) , list_text)
-    for li_match in all_matches:
-        #print "len(li_match) = " + str(len(li_match))
-        #dump_match(li_match)
-
-        if type(li_match).__name__ != 'str':
-            continue
-
-        # Parse li tag, where re.findall will return a "list" composed of "str" (due to single capturing group "()")
-        href_matches = re.findall( re.compile( '<a href=\"(.*?)\">[\s]*<img' , flags=(re.IGNORECASE|re.DOTALL)) , li_match)
-        for href_match in href_matches:
-            #dump_match(href_match)
-            ret['link'].append(href_match)
-            print "ret['link'][%d] = %s" % (count, ret['link'][count])
-            count += 1
 
         #print "commodity title=%s, vendor=%s, vendor_addr=%s, vendor_tel=%s, website=%s" % (ret['title'], ret['vendor'], ret['vendor_addr'], ret['vendor_tel'], ret['website'])
 
@@ -188,13 +165,16 @@ def parse_commodity_page(html, ret={}):
 if __name__ == '__main__':
     try:
         # Read file
-        f = open("6lucky/commodity/MICCOSMO.html", "r")
+        #f = open("6lucky/commodity/MICCOSMO.html", "r")
+        #f = open("6lucky/single_page_list/a.html", "r")
+        f = open("6lucky/page_list_head/a.html", "r")
+        #f = open("6lucky/page_list_head/no_list.html", "r")
         html_text = f.read()
         f.close()
 
         # parse 
-        parse_commodity_page(html_text)
-        #parse_list_page(html_text, True)
+        #parse_commodity_page(html_text)
+        parse_list_page(html_text, True)
 
         print "regular expression parsing done"
         sys.exit(0)
