@@ -23,18 +23,11 @@ sys.setdefaultencoding("utf-8")
 
 sixlucky_working_directory = '.'
 
-def sixlucky_url_to_local_file(url):
+def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat"):
 
     global sixlucky_working_directory
 
-    if url[0:7] == 'http://':
-        # Replace filename
-        url = url[7:]  # Remove 'http://' (7 byes)
-    elif url[0:8] == 'https://':
-        url = url[8:]
-
-    url = string.replace(url, "//", "/")
-    target_file = string.replace(url, '/', '_') + '.html'
+    sixlucky_working_directory = "sixlucky/"  + main_cat + "/" + sub_cat
 
     try:
         os.makedirs(sixlucky_working_directory)
@@ -44,25 +37,32 @@ def sixlucky_url_to_local_file(url):
             printf('sixlucky_url_to_local_file mkdir exception: !!')
             traceback.print_exc()
 
-    target_file = os.path.join(sixlucky_working_directory, target_file)
+    i = string.rindex(url, "?")
+    target_file = sixlucky_working_directory + "/" + urllib.quote(url[i+1:], "") + '.html'
 
     return target_file
 
 
-def sixlucky_dump_list_page(url, referer = ''):
+#
+# Dump a list html page
+#
+def sixlucky_dump_list_page(url, main_cat = "main_cat", sub_cat = "sub_cat"):
 
     printf("sixlucky_dump_list_page: url = %s " ,url)
 
     target_file = sixlucky_url_to_local_file(url)
 
-    printf('dump %s to target_file: %s , referer: %s', url, target_file, referer)
+    printf('dump %s to target_file: %s ', url, target_file)
     # Fetch html page
-    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file, referer)
+    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
    
     return html_text
 
 
 
+#
+# Dump all list html pages from all sub categories from a main category
+#
 def sixlucky_dump_main_category(main_cat_dict):
 
     try:
@@ -78,8 +78,9 @@ def sixlucky_dump_main_category(main_cat_dict):
         printf('sixlucky_dump_main_category exception: !!')
         traceback.print_exc()
 
-
-
+#
+# Dump all list html pages from a sub category
+#
 def sixlucky_dump_sub_category(url, main_cat, sub_cat):
 
     printf("\n==> Start to parse category url: %s, main_cat: %s, sub_cat: %s ...", url, main_cat, sub_cat)
@@ -88,8 +89,6 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
 
     # Category with Referer
     #url = 'http://iqc.com.tw/List/2/'
-    #referer = 'http://iqc.com.tw/List/1/'
-    #referer = 'http://iqc.com.tw/List/0/1/61'
 
     # Return here for debugging
     #return
@@ -102,19 +101,23 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
     if len(html_text) > 0:
         ret = sixlucky_parse_pages.parse_list_page(html_text, True)
 
+    print("ret['total_product_counts'] = %d", ret['total_product_counts'])
+
     # Calculate pages in this category
     page_count = 0
     if ret['total_product_counts'] > 0:
-        page_count = ret['total_product_counts']/24 + 1
+        page_count = ret['total_product_counts']/18 + 1
 
     # Fetch page from 2 ~ end
     for i in range(1, page_count):
-        referer = url
-        url = 'http://iqc.com.tw/List/' + str(i) + '/'
+        url = ret["list_link"][i]
         html_text = sixlucky_dump_list_page(url)
 
 
-def sixlucky_parse_commodity(barcode, ret = {}):
+#
+# Dump a commodity html page and parse a it
+#
+def sixlucky_dump_and_parse_commodity(barcode, ret = {}):
 
     printf("\n===> Start to dump barcode %s ...", barcode)
 
@@ -142,7 +145,7 @@ def sixlucky_parse_commodity(barcode, ret = {}):
 
 
 #
-# Parse a list file and dump its commodities html
+# Parse a list html page and dump all commodities html pages from it
 #
 def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
     
@@ -173,7 +176,7 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
             printf('pid: %s', pid)
             if (pid is not None) and (pid != ''):
                 commodity = {'main_cat' : main_cat, 'sub_cat' : sub_cat}
-                commodity = sixlucky_parse_commodity(pid, commodity)
+                commodity = sixlucky_dump_and_parse_commodity(pid, commodity)
                 list_dump['commodities'].append(commodity)
 
             i += 1
@@ -200,7 +203,7 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
 
 
 #
-# Parse a dir containing list files and dump their commodities html files
+# Parse list html pages from a dir and dump all commodities html pages from list html pages
 #
 def sixlucky_parse_list_dir(main_cat, sub_cat, list_dir):
 
@@ -239,14 +242,25 @@ def sixlucky_parse_list_dir(main_cat, sub_cat, list_dir):
 
     return
 
-
+#
+# Steps:
+#       1. dump-sub-category
+#       2. dump-main-category
+#       3. parse-list-file
+#       4. pase-list-dirs
+#       5. dump-commodity-from-sub-category-dirs 
+#       6. collect-all-db
+#
+#
 
 def print_usage(cmd):
     usage = '''
-        -m, --parse-main-category=N
-            Parse main category (index = N)
-        -s, --parse-sub-category
-            Parse sub category
+        -m, --dump-main-category=N
+            Dump list html pages from sub categories from a main category (index = N)
+        -s, --dump-sub-category
+            Dump list html pages from a sub category
+        -r, dump-commodity-from-sub-category-dirs
+            Dump commodity pages from sub category dirs
         -l, --parse-list-file=FILE
             Parse a list file
         -d, --parse-list-dir=DIR
@@ -264,16 +278,16 @@ def print_usage(cmd):
 
 def main(argv):
 
-    parse_main_category = None
-    parse_sub_category = None
-    parse_sub_category_dirs = None
+    dump_main_category = None
+    dump_sub_category = None
+    dump_commodity_from_sub_category_dirs = None
     parse_list_file = None
     parse_list_dir = None
     collect_all_db = None
 
     try:
         #printf(" argv=%s", str(argv))
-        opts, other_args = getopt.getopt(argv[1:],"m:srf:d:c",["parse-main-category=", "parse-sub-category", "parse-sub-category-dirs", "parse-list-file=", "parse-list-dir=", "collect-all-db"])
+        opts, other_args = getopt.getopt(argv[1:],"m:srf:d:c",["dump-main-category=", "dump-sub-category", "dump-commodity-from-sub-category-dirs", "parse-list-file=", "parse-list-dir=", "collect-all-db"])
 
     except getopt.GetoptError:
         printf("getopt.GetoptError: ")
@@ -282,12 +296,12 @@ def main(argv):
         sys.exit(-1)
 
     for opt, arg in opts:
-        if opt in ("-m", "--parse-main-category"):
-            parse_main_category = int(arg)       # index of main category (int)
-        elif opt in ("-s", "--parse-sub-category"):
-            parse_sub_category = True
-        elif opt in ("-r", "--parse-sub-category-dirs"):
-            parse_sub_category_dirs = True
+        if opt in ("-m", "--dump-main-category"):
+            dump_main_category = int(arg)       # index of main category (int)
+        elif opt in ("-s", "--dump-sub-category"):
+            dump_sub_category = True
+        elif opt in ("-r", "--dump-commodity-from-sub-category-dirs"):
+            dump_commodity_from_sub_category_dirs = True
         elif opt in ("-f", "--parse-list-file"):
             parse_list_file = arg           # file (string)
         elif opt in ("-d", "--parse-list-dir"):                 # A dir containing whole list pages
@@ -295,33 +309,33 @@ def main(argv):
         elif opt in ("-c", "--collect-all-db"):
             collect_all_db = True
 
-    if parse_main_category is None and parse_sub_category is None and parse_sub_category_dirs is None and parse_list_file is None and parse_list_dir is None and collect_all_db is None:
+    if dump_main_category is None and dump_sub_category is None and dump_commodity_from_sub_category_dirs is None and parse_list_file is None and parse_list_dir is None and collect_all_db is None:
         print_usage(argv[0])
         sys.exit()
 
-    return parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db
+    return dump_main_category, dump_sub_category, dump_commodity_from_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db
 
 
 
 if __name__ == '__main__':
     try:
 
-        parse_main_category, parse_sub_category, parse_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db = main(sys.argv) 
+        dump_main_category, dump_sub_category, dump_commodity_from_sub_category_dirs, parse_list_file, parse_list_dir, collect_all_db = main(sys.argv) 
 
 
-        if parse_main_category is not None:
+        if dump_main_category is not None:
             # Define Main Category Entry
 
-            sixlucky_dump_main_category(sixlucky_categories.all_categories[ parse_main_category ])
+            sixlucky_dump_main_category(sixlucky_categories.all_categories[ dump_main_category ])
             pass
 
-        if parse_sub_category is not None:
+        if dump_sub_category is not None:
             # Define Sub Category Entry
 
-            if False:
-                url = 'http://iqc.com.tw/List/0/1/61'
-                main_cat = '飲品零食'
-                sub_cat = '水'
+            if True:
+                main_cat = sixlucky_categories.all_categories[0]['main_cat']
+                url = sixlucky_categories.all_categories[0]['sub_cats'][1]['url']
+                sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][1]['sub_cat']
             else:
                 url_postfix = sixlucky_categories.all_categories[0]['sub_cats'][0]['url']
                 url = 'http://iqc.com.tw/' + url_postfix
@@ -331,7 +345,7 @@ if __name__ == '__main__':
             sixlucky_dump_sub_category(url, main_cat, sub_cat)
             pass
 
-        if parse_sub_category_dirs is not None:
+        if dump_commodity_from_sub_category_dirs is not None:
             # Define Sub Category Entry
 
             if False:  # debug only
@@ -342,7 +356,7 @@ if __name__ == '__main__':
                 sub_cat = s['sub_cat']
                 sub_cat_dir = "./" + s['url']
         
-                printf ("parse_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                printf ("dump_commodity_from_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
                 sixlucky_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
 
             else:
@@ -357,7 +371,7 @@ if __name__ == '__main__':
                         sub_cat = s['sub_cat']
                         sub_cat_dir = "./" + s['url']
 
-                        printf ("parse_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                        printf ("dump_commodity_from_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
                         sixlucky_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
 
             pass

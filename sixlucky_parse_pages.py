@@ -60,7 +60,7 @@ def dump_match(match):
     print "\n======================= dump_match start =========================="
     dump_node(match, indent)
     print "======================= dump_match done ==========================\n"
-    return    	
+    return        
 
 
 
@@ -69,6 +69,7 @@ def parse_list_page(html, b_first_page, ret={}):
     count = 0
     ret['link'] = []
     ret['total_product_counts'] = 0
+    total_product_counts_gotten = False
     if not ret.has_key("list_link"):
         ret["list_link"]=[]
 
@@ -81,7 +82,7 @@ def parse_list_page(html, b_first_page, ret={}):
     if b_first_page:
         # Return pages count area
         header_text = ""
-        all_matches = re.findall( re.compile( '<td align=\"right\"><font color=\"#666666\" class=\"font09\">(.*?)</td>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+        all_matches = re.findall( re.compile( '<td align=[\"]?right[\"]?><font color=\"#666666\" class=[\"]?font09[\"]?>(.*?)</td>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
         #dump_match(all_matches)
         for match in all_matches:
             header_text = match
@@ -92,9 +93,16 @@ def parse_list_page(html, b_first_page, ret={}):
             print "[parse_list_page] No additional list pages"
         else:
             # Return list page links
-            all_matches = re.findall( re.compile( '<a style=\"color:#666666;\" href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , header_text)
-            #dump_match(all_matches)
+            all_matches = re.findall( re.compile( '共: (.*?)筆' , flags=(re.IGNORECASE|re.DOTALL)) , header_text)
             for match in all_matches:
+                ret["total_product_counts"] = int(match)
+                print "total_product_counts=%d" % ret["total_product_counts"]
+                total_product_counts_gotten = True
+
+            #dump_match(all_matches)
+            all_matches = re.findall( re.compile( '<a style=[\'\"]color:#666666;[\'\"] href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , header_text)
+            for match in all_matches:
+                print "list_link=%s" % match
                 ret["list_link"].append(match)
 
     table_text = ""
@@ -113,7 +121,8 @@ def parse_list_page(html, b_first_page, ret={}):
     for match in all_matches:
         #print "len(match) = " + str(len(match))
         ret["link"].append(match)
-        ret['total_product_counts'] += 1
+        if not total_product_counts_gotten:
+            ret['total_product_counts'] += 1
         dump_match(match)
         continue
 
@@ -167,7 +176,8 @@ if __name__ == '__main__':
         # Read file
         #f = open("6lucky/commodity/MICCOSMO.html", "r")
         #f = open("6lucky/single_page_list/a.html", "r")
-        f = open("6lucky/page_list_head/a.html", "r")
+        #f = open("6lucky/page_list_head/a.html", "r")
+        f = open("sixlucky/main_cat/sub_cat/SOB%3D12473%26Nm%3D%25E8%25BA%25AB%25E9%25AB%2594%25E4%25BF%259D%25E9%25A4%258A%25E6%25B8%2585%25E6%25BD%2594%26TO%3D30427%26TNm%3D%25E6%2589%258B%25E9%2583%25A8%25E4%25BF%259D%25E9%25A4%258A%252F%25E6%25B8%2585%25E6%25BD%2594.html", "r")
         #f = open("6lucky/page_list_head/no_list.html", "r")
         html_text = f.read()
         f.close()
