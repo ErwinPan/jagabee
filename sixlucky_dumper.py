@@ -23,11 +23,11 @@ sys.setdefaultencoding("utf-8")
 
 sixlucky_working_directory = '.'
 
-def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat"):
+def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat", page_type = None, index = -1):
 
     global sixlucky_working_directory
 
-    sixlucky_working_directory = "sixlucky/"  + main_cat + "/" + sub_cat
+    sixlucky_working_directory = "sixlucky/"  + string.replace(main_cat, "/", "_") + "/" + string.replace(sub_cat, "/", "_")
 
     try:
         os.makedirs(sixlucky_working_directory)
@@ -37,8 +37,11 @@ def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat"):
             printf('sixlucky_url_to_local_file mkdir exception: !!')
             traceback.print_exc()
 
-    i = string.rindex(url, "?")
-    target_file = sixlucky_working_directory + "/" + urllib.quote(url[i+1:], "") + '.html'
+    if page_type is None or index < 0:
+        i = string.rindex(url, "?")
+        target_file = sixlucky_working_directory + "/" + urllib.quote(url[i+1:], "") + ".html"
+    else:
+        target_file = sixlucky_working_directory + "/" + page_type + "_" + str(index) + ".html"
 
     return target_file
 
@@ -46,11 +49,11 @@ def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat"):
 #
 # Dump a list html page
 #
-def sixlucky_dump_list_page(url, main_cat = "main_cat", sub_cat = "sub_cat"):
+def sixlucky_dump_list_page(url, main_cat = "main_cat", sub_cat = "sub_cat", index = 0):
 
-    printf("sixlucky_dump_list_page: url = %s " ,url)
+    printf("sixlucky_dump_list_page: url = %s, main_cat = %s, sub_cat = %s " , url, main_cat, sub_cat)
 
-    target_file = sixlucky_url_to_local_file(url)
+    target_file = sixlucky_url_to_local_file(url, main_cat = main_cat, sub_cat = sub_cat, page_type = "list", index = index)
 
     printf('dump %s to target_file: %s ', url, target_file)
     # Fetch html page
@@ -95,7 +98,7 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
     printf("List is %d", str.find(url, "List"))
     sixlucky_working_directory = url[str.find(url, "List"):]
 
-    html_text = sixlucky_dump_list_page(url)
+    html_text = sixlucky_dump_list_page(url, main_cat = main_cat, sub_cat = sub_cat, index = 0)
 
     # Parse html page
     if len(html_text) > 0:
@@ -110,8 +113,8 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
 
     # Fetch page from 2 ~ end
     for i in range(1, page_count):
-        url = ret["list_link"][i]
-        html_text = sixlucky_dump_list_page(url)
+        url = "http://www.6lucky.com.tw/showroom/" + ret["list_link"][i]
+        html_text = sixlucky_dump_list_page(url, main_cat = main_cat, sub_cat = sub_cat, index = i)
 
 
 #
