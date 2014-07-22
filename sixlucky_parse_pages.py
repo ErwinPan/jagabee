@@ -142,7 +142,7 @@ def parse_commodity_page(html, ret={}):
         return ret
 
     # Parse , where re.findall returns a "list" of "str" (single capturing group)
-    all_matches = re.findall( re.compile( '<td bgcolor=\"#ffffff\" valign=\"top\" align=\"center\" class=\"font09\" width=\"40%\"><br><a href=\"(.*?)\" target=\"_blank\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    all_matches = re.findall( re.compile( '<td bgcolor=\"?#ffffff\"? valign=\"?top\"? align=\"?center\"? class=\"?font09\"? width=\"?40%\"?><br><a href=\"(.*?)\" target=\"_blank\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
         ret["img_url"] = match
         #dump_match(match)
@@ -150,20 +150,28 @@ def parse_commodity_page(html, ret={}):
 
 
     # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
-    all_matches = re.findall( re.compile( '<font color=\"#377EB3\" class=\"font09\">商品編號:</font>(.*?)<b>(.*?)<br><br>(.*?)</b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    all_matches = re.findall( re.compile( '<font color=\"?#377EB3\"? class=\"?font09\"?>商品編號:</font>(.*?)<b>(.*?)<br><br>(.*?)</b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
         ret["barcode"] = match[1]
         ret["title"] = match[2]
         #dump_match(match)
         break # only get first item from list
 
-    # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
-    all_matches = re.findall( re.compile( '<b>市售價: (.*?)<s>(.*?)</s>(.*?), 馬上省下: <font color=\"#D32417\" style=\"font-family:Arial;\">(.*?)</font> 元<br><b>網路價 <font color=\"#D32417\" style=\"font-family:Arial;\">(.*?)</font> 元 </b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
-    for match in all_matches:
-        ret["ori_price"] = match[1]
-        ret["price"] = match[4]
-        #dump_match(match)
-        break # only get first item from list
+    if html.find("市售價") > 0 and html.find("馬上省下") > 0:
+        # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
+        all_matches = re.findall( re.compile( '<b>市售價: (.*?)<s>(.*?)</s>(.*?), 馬上省下: <font color=\"?#D32417\"? style=\"?font-family:Arial;\"?>(.*?)</font> 元<br><b>網路價 <font color=\"?#D32417\"? style=\"?font-family:Arial;\"?>(.*?)</font> 元 </b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+        for match in all_matches:
+            ret["ori_price"] = match[1]
+            ret["price"] = match[4]
+            #dump_match(match)
+            break # only get first item from list
+    else:
+        all_matches = re.findall( re.compile( '<b>網路價 <font color=\"#D32417\" style=\"font-family:Arial;\">(.*?)</font> 元 </b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+        for match in all_matches:
+            ret["ori_price"] = match
+            ret["price"] = match
+            #dump_match(match)
+            break # only get first item from list
 
     print "commodity barcode=%s, title=%s, img_url=%s, price=%s, ori_price=%s" % (ret['barcode'], ret['title'], ret['img_url'], ret["price"], ret["ori_price"])
 
@@ -175,16 +183,17 @@ if __name__ == '__main__':
     try:
         # Read file
         #f = open("6lucky/commodity/MICCOSMO.html", "r")
+        f = open("6lucky/commodity/net_price.html", "r")
         #f = open("6lucky/single_page_list/a.html", "r")
         #f = open("6lucky/page_list_head/a.html", "r")
-        f = open("sixlucky/main_cat/sub_cat/SOB%3D12473%26Nm%3D%25E8%25BA%25AB%25E9%25AB%2594%25E4%25BF%259D%25E9%25A4%258A%25E6%25B8%2585%25E6%25BD%2594%26TO%3D30427%26TNm%3D%25E6%2589%258B%25E9%2583%25A8%25E4%25BF%259D%25E9%25A4%258A%252F%25E6%25B8%2585%25E6%25BD%2594.html", "r")
+        #f = open("sixlucky/main_cat/sub_cat/SOB%3D12473%26Nm%3D%25E8%25BA%25AB%25E9%25AB%2594%25E4%25BF%259D%25E9%25A4%258A%25E6%25B8%2585%25E6%25BD%2594%26TO%3D30427%26TNm%3D%25E6%2589%258B%25E9%2583%25A8%25E4%25BF%259D%25E9%25A4%258A%252F%25E6%25B8%2585%25E6%25BD%2594.html", "r")
         #f = open("6lucky/page_list_head/no_list.html", "r")
         html_text = f.read()
         f.close()
 
         # parse 
-        #parse_commodity_page(html_text)
-        parse_list_page(html_text, True)
+        parse_commodity_page(html_text)
+        #parse_list_page(html_text, True)
 
         print "regular expression parsing done"
         sys.exit(0)
