@@ -106,10 +106,17 @@ def parse_list_page(html, b_first_page, ret={}):
                 ret["list_link"].append(match)
 
     table_text = ""
+
+    # List pattern 1: having tbody
     all_matches = re.findall( re.compile( '<table border=\"0\" width=\"100%\" cellspacing=\"2\" cellpadding=\"6\" class=\"font09h15\">(.*)</tbody></table>[\s]*<style type=\"text/css\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+
+    # List pattern 2: no tbody
+    if len(all_matches) <= 0:
+        all_matches = re.findall( re.compile( '<table border=\"?0\"? width=\"?100%\"? cellspacing=\"?2\"? cellpadding=\"?6\"? class=\"?font09h15\"?>(.*?)</table>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+
+    #dump_match(all_matches)
     for match in all_matches:
         table_text = match
-        dump_match(all_matches)
         break # only get first item from list
     
     if table_text == "":
@@ -119,6 +126,8 @@ def parse_list_page(html, b_first_page, ret={}):
     # Parse table list which returns a list of "str"s
     all_matches = re.findall( re.compile( '<a href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , table_text)
     for match in all_matches:
+        if match[0:7] != "http://":
+            match = "http://www.6lucky.com.tw" + match
         #print "len(match) = " + str(len(match))
         ret["link"].append(match)
         if not total_product_counts_gotten:
@@ -183,17 +192,18 @@ if __name__ == '__main__':
     try:
         # Read file
         #f = open("6lucky/commodity/MICCOSMO.html", "r")
-        f = open("6lucky/commodity/net_price.html", "r")
-        #f = open("6lucky/single_page_list/a.html", "r")
+        #f = open("6lucky/commodity/net_price.html", "r")
+
+        f = open("6lucky/single_page_list/a.html", "r")
         #f = open("6lucky/page_list_head/a.html", "r")
-        #f = open("sixlucky/main_cat/sub_cat/SOB%3D12473%26Nm%3D%25E8%25BA%25AB%25E9%25AB%2594%25E4%25BF%259D%25E9%25A4%258A%25E6%25B8%2585%25E6%25BD%2594%26TO%3D30427%26TNm%3D%25E6%2589%258B%25E9%2583%25A8%25E4%25BF%259D%25E9%25A4%258A%252F%25E6%25B8%2585%25E6%25BD%2594.html", "r")
         #f = open("6lucky/page_list_head/no_list.html", "r")
+        #f = open("sixlucky/身體保養清潔/頸部保養/list_0.html", "r")
         html_text = f.read()
         f.close()
 
         # parse 
-        parse_commodity_page(html_text)
-        #parse_list_page(html_text, True)
+        #parse_commodity_page(html_text)
+        parse_list_page(html_text, True)
 
         print "regular expression parsing done"
         sys.exit(0)
