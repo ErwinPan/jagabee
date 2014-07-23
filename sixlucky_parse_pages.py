@@ -143,13 +143,20 @@ def parse_list_page(html, b_first_page, ret={}):
 
 
 def parse_commodity_page(html, ret={}):
-        
+    
+    # products table
     ret["vendor"] = ""
     ret["vendor_addr"] = ""
     ret["vendor_tel"] = ""
     ret["barcode"] = ""
     ret["title"] = ""
     ret["reserv_date"] = ""
+    ret["description"] = ""
+    ret["website"] = ""
+    # prices table
+    ret["shop"] = "六福香水(6lucky)"
+    ret["price"] = "0"
+    ret["ori_price"] = "0"
 
     try:
         all_matches = re.findall( re.compile( '^<!-- (.*?) -->' , flags=(re.IGNORECASE|re.DOTALL) ) , html)

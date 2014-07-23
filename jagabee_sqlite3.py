@@ -20,6 +20,52 @@ sys.setdefaultencoding("utf-8")
         img_url
 '''
 
+def db_insert_product(p, cur):
+    # Transfer dict to row tuple
+    row = (p['barcode'], p['title'].encode('utf-8'), p['main_cat'].encode('utf-8'), p['sub_cat'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
+
+    try:
+        cur.execute('DELETE from products WHERE barcode=?', (row[0],))
+    except sqlite3.Error:
+        # Ignore the error because
+        traceback.print_exc()
+        pass
+
+    try:
+        cur.execute('INSERT INTO products VALUES (?,?,?,?,?,?,?,?,?,?)', row)
+        ret = 1
+
+    except sqlite3.Error, e:
+        print 'sqlite3.Error: '
+        traceback.print_exc()
+        pass
+
+    print 'db_insert_product, ret = %d' % ret
+    return ret
+
+
+def db_insert_price(p, cur):
+    # Transfer dict to row tuple
+    row = (p['barcode'], p['price'].encode('utf-8'), p['ori_price'].encode('utf-8'), p['shop'].encode('utf-8'), p['description'].encode('utf-8'), p['website'].encode('utf-8'))
+
+    try:
+        cur.execute('DELETE from prices WHERE barcode=?', (row[0],))
+    except sqlite3.Error:
+        # Ignore the error because
+        traceback.print_exc()
+        pass
+
+    try:
+        cur.execute('INSERT INTO prices VALUES (?,?,?,?,?,?)', row)
+        ret = 1
+
+    except sqlite3.Error, e:
+        print 'sqlite3.Error: '
+        traceback.print_exc()
+        pass
+
+    print 'db_insert_price, ret = %d' % ret
+    return ret
 
 def db_insert_rows(products, db_name):
 
@@ -40,29 +86,12 @@ def db_insert_rows(products, db_name):
         traceback.print_exc()
 
     for p in products:
+        ret = db_insert_product(p, cur)
 
-        # Transfer dict to row tuple
-        row = (p['barcode'], p['title'].encode('utf-8'), p['main_cat'].encode('utf-8'), p['sub_cat'].encode('utf-8'), p['vendor'].encode('utf-8'), p['vendor_addr'].encode('utf-8'), p['vendor_tel'].encode('utf-8'), p['website'].encode('utf-8'), p['reserv_date'].encode('utf-8'), p['img_url'])
-
-        try:
-            cur.execute('DELETE from products WHERE barcode=?', (row[0],))
-        except sqlite3.Error:
-            # Ignore the error because
-            traceback.print_exc()
-            pass
-
-
-        try:
-
-            cur.execute('INSERT INTO products VALUES (?,?,?,?,?,?,?,?,?,?)', row)
+        if ret > 0:
+            ret = db_insert_price(p, cur)
             inserted_row_count += 1
 
-        except sqlite3.Error, e:
-            print 'sqlite3.Error: '
-            traceback.print_exc()
-            pass
-
-    print 'db_insert_rows, db_name = %s , inserted_row_count = %d' % (db_name, inserted_row_count)
 
     conn.commit()
     conn.close()
@@ -79,13 +108,26 @@ def db_create(db_name):
 
         cur = conn.cursor()
 
-        # Create table
-        cur.execute('''CREATE TABLE products
+        try:
+            # Create table
+            cur.execute('''CREATE TABLE products
                              (barcode text PRIMARY KEY, title text, main_cat text, sub_cat text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
+        except sqlite3.OperationalError:
+            #print 'sqlite3.OperationalError: insert fail due to table exist '
+            #traceback.print_exc()
+            pass
+
+        try:
+            cur.execute('''CREATE TABLE prices
+                             (barcode text PRIMARY KEY, price text, ori_price text, shop text, description text, ori_url text)''')
+        except sqlite3.OperationalError:
+            #print 'sqlite3.OperationalError: insert fail due to table exist '
+            #traceback.print_exc()
+            pass
 
     except sqlite3.OperationalError:
-        #print 'sqlite3.OperationalError: insert fail due to table exist '
-        #traceback.print_exc()
+        print 'sqlite3.OperationalError: ... '
+        traceback.print_exc()
         pass
 
     except Exception, e:
@@ -156,11 +198,31 @@ def db_merge(src_db, dest_db):
 if __name__ == '__main__':
     try:
 
-        sqlite3_create('test.db');
+        db_create('test.db');
 
-        sqlite3_execute_script_with_transaction('test.db');
+        # products table
+        ret = {}
+        ret["main_cat"] = ""
+        ret["sub_cat"] = ""
+        ret["vendor"] = ""
+        ret["vendor_addr"] = ""
+        ret["vendor_tel"] = ""
+        ret["barcode"] = ""
+        ret["title"] = ""
+        ret["reserv_date"] = ""
+        ret["description"] = ""
+        ret["img_url"] = "http://123/"
+        ret["website"] = "http://website/"
 
-        sqlite3_test('test.db');
+        # prices table
+        ret["shop"] = "六福香水(6lucky)"
+        ret["price"] = "100"
+        ret["ori_price"] = "150"
+
+        products = []
+        products.append(ret)
+        
+        db_save_products(products)
 
         sys.exit(0)
 
