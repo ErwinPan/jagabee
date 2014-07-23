@@ -5,7 +5,7 @@ import StringIO
 import traceback
 import sys
 import re
-
+import string
 
 def dump_list_tuple(list_or_tuple, indent):
 
@@ -143,8 +143,28 @@ def parse_list_page(html, b_first_page, ret={}):
 
 
 def parse_commodity_page(html, ret={}):
-    
-    body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html);
+        
+    ret["vendor"] = ""
+    ret["vendor_addr"] = ""
+    ret["vendor_tel"] = ""
+    ret["barcode"] = ""
+    ret["title"] = ""
+    ret["reserv_date"] = ""
+
+    try:
+        all_matches = re.findall( re.compile( '^<!-- (.*?) -->' , flags=(re.IGNORECASE|re.DOTALL) ) , html)
+        #dump_match(all_matches)
+        for match in all_matches:
+            a = eval(string.strip(match))
+            ret["website"] = a["ori_url"]
+    except Exception, e:
+        traceback.print_exc()
+        print "regular expression parsing failed"
+        pass
+
+
+
+    body = re.findall( re.compile( '(<body(.*?)</body>)' , flags=(re.IGNORECASE|re.DOTALL) ) , html)
     #print "len(body) = " + str(len(body))
     if len(body) < 1 :
         print "No BODY DATA"
@@ -161,10 +181,20 @@ def parse_commodity_page(html, ret={}):
     # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
     all_matches = re.findall( re.compile( '<font color=\"?#377EB3\"? class=\"?font09\"?>商品編號:</font>(.*?)<b>(.*?)<br><br>(.*?)</b>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
     for match in all_matches:
+        ret["vendor"] = ""
+        ret["vendor_addr"] = ""
         ret["barcode"] = match[1]
         ret["title"] = match[2]
         #dump_match(match)
         break # only get first item from list
+
+    if ret["title"] != "":
+        all_matches = re.findall( re.compile( '^([\w]*)([\W\w]*)' , flags=(re.IGNORECASE|re.DOTALL)) , ret["title"])
+        #dump_match(all_matches)
+        for match in all_matches:
+            ret["vendor"] = string.strip(match[0])
+            ret["title"] = string.strip(match[1])
+        
 
     if html.find("市售價") > 0 and html.find("馬上省下") > 0:
         # Parse , where re.findall returns a "list" of tuples (multiple capturing groups)
