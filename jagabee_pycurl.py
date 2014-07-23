@@ -61,7 +61,11 @@ def pycurl_wrapper_fetch_internal(url, target_file = '', referer = ''):
     #print 'http code is: %s, len(html) = %d' % (http_code, len(r))
         
     if target_file != '':
+
+        a = {}
+        a['ori_url'] = url
         f = open( target_file , 'wb' )
+        f.write("<!-- \n" + str(a) + "\n-->\n")
         f.write( r )
         f.close()
 
@@ -72,7 +76,7 @@ def pycurl_wrapper_fetch_internal(url, target_file = '', referer = ''):
 if __name__ == '__main__':
     try:
         url = 'http://iqc.com.tw/List/0/1/61'
-	target_file = './1.html'
+        target_file = './1.html'
         pycurl_wrapper_fetch(url, target_file)
         print "done"
         sys.exit(0)
