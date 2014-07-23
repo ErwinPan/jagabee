@@ -34,7 +34,7 @@ def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat", 
 
     global sixlucky_working_directory
 
-    sixlucky_working_directory = sixlucky_get_directory(main_cat, sub_cat)
+    sixlucky_working_directory = sixlucky_get_directory(url, main_cat, sub_cat)
 
     try:
         os.makedirs(sixlucky_working_directory)
@@ -138,14 +138,15 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
 #
 def sixlucky_dump_and_parse_commodity(url, main_cat = "main_cat", sub_cat = "sub_cat", index = -1, ret = {}):
 
-    printf("\n===> Start to dump commodity page url: %s ...", url)
 
     target_file = sixlucky_url_to_local_file(url, main_cat, sub_cat, "commodity", index)
+
+    printf("\n===> Start to dump commodity page url: %s to target_file: %s ...", url, target_file)
 
     html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
 
     if len(html_text) > 0:
-        sixlucky_parse_pages.parse_commodities_page(html_text, ret)
+        sixlucky_parse_pages.parse_commodity_page(html_text, ret)
 
     return ret
 
@@ -232,7 +233,7 @@ def sixlucky_parse_list_dir(main_cat, sub_cat, list_dir):
     for f in all_files:
         printf("parsing file: %s ...", f)
         try:
-            if f.startswith('iqc.com.tw_List') or f.startswith("iqc.com.tw__List"):
+            if f.startswith("list_"):
                 sixlucky_parse_list_file(main_cat, sub_cat, os.path.join(root, f), db_name)
 
             pass
@@ -248,7 +249,7 @@ def sixlucky_parse_list_dir(main_cat, sub_cat, list_dir):
 #       1. dump-sub-category
 #       2. dump-main-category
 #       3. parse-list-file
-#       4. pase-list-dirs
+#       4. parse-list-dir
 #       5. dump-commodity-from-sub-category-dirs 
 #       6. collect-all-db
 #
@@ -373,15 +374,14 @@ if __name__ == '__main__':
 
         if parse_list_file is not None:
             main_cat = sixlucky_categories.all_categories[0]['main_cat']
-            url = sixlucky_categories.all_categories[0]['sub_cats'][0]['url']
             sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
 
             sixlucky_parse_list_file(main_cat, sub_cat, parse_list_file)
             pass
         
         if parse_list_dir is not None:
-            main_cat = "飲品零食"
-            sub_cat = "汽水"
+            main_cat = sixlucky_categories.all_categories[0]['main_cat']
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
             sixlucky_parse_list_dir(main_cat, sub_cat, parse_list_dir)
             pass
 
