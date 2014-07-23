@@ -23,11 +23,18 @@ sys.setdefaultencoding("utf-8")
 
 sixlucky_working_directory = '.'
 
+def sixlucky_get_directory(url, main_cat = "main_cat", sub_cat = "sub_cat"):
+
+    directory = "sixlucky/"  + string.replace(main_cat, "/", "_") + "/" + string.replace(sub_cat, "/", "_")
+
+    return directory
+
+
 def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat", page_type = None, index = -1):
 
     global sixlucky_working_directory
 
-    sixlucky_working_directory = "sixlucky/"  + string.replace(main_cat, "/", "_") + "/" + string.replace(sub_cat, "/", "_")
+    sixlucky_working_directory = sixlucky_get_directory(main_cat, sub_cat)
 
     try:
         os.makedirs(sixlucky_working_directory)
@@ -129,29 +136,16 @@ def sixlucky_dump_sub_category(url, main_cat, sub_cat):
 #
 # Dump a commodity html page and parse a it
 #
-def sixlucky_dump_and_parse_commodity(barcode, ret = {}):
+def sixlucky_dump_and_parse_commodity(url, main_cat = "main_cat", sub_cat = "sub_cat", index = -1, ret = {}):
 
-    printf("\n===> Start to dump barcode %s ...", barcode)
+    printf("\n===> Start to dump commodity page url: %s ...", url)
 
-    # http://iqc.com.tw/Commodities/Detail/176725
-    url = 'http://iqc.com.tw/Commodities/Detail/' + barcode
-
-    target_file = sixlucky_url_to_local_file(url)
+    target_file = sixlucky_url_to_local_file(url, main_cat, sub_cat, "commodity", index)
 
     html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
 
     if len(html_text) > 0:
         sixlucky_parse_pages.parse_commodities_page(html_text, ret)
-
-    # http://iqc.com.tw/Commodity/Detail/176725
-    url = 'http://iqc.com.tw/Commodity/Detail/' + barcode
-
-    target_file = sixlucky_url_to_local_file(url)
-
-    html_text = jagabee_pycurl.pycurl_wrapper_fetch(url, target_file)
-
-    if len(html_text) > 0:
-        sixlucky_parse_pages.parse_commodity_page(html_text, ret)
 
     return ret
 
@@ -172,26 +166,21 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
         return
 
     ret = {}
-    ret = sixlucky_parse_pages.parse_list_page(html_text, False, ret)
+    ret = sixlucky_parse_pages.parse_list_page(html_text, True, ret)
 
-    i = 0
+    commodity_index = 0
 
     list_dump = {'list_file' : list_file}
     list_dump['commodities'] = []
-    list_dump_file = list_file + '.dict'    # Dump to a dictionary
 
-    for c in ret['link']:
-        # /Commodities/Detail/171342
-        # printf('c=%s, type=%s, rindex of "/" is %d', str(c), str(type(c)), string.rindex(c, '/'))
+    for commodity_url in ret['link']:
         try:
-            pid = c[string.rindex(c, '/')+1:]
-            printf('pid: %s', pid)
-            if (pid is not None) and (pid != ''):
-                commodity = {'main_cat' : main_cat, 'sub_cat' : sub_cat}
-                commodity = sixlucky_dump_and_parse_commodity(pid, commodity)
-                list_dump['commodities'].append(commodity)
+            printf('commodity_index: %d', commodity_index)
+            m = {'main_cat' : main_cat, 'sub_cat' : sub_cat}
+            m = sixlucky_dump_and_parse_commodity(commodity_url, main_cat, sub_cat, commodity_index, m)
+            list_dump['commodities'].append(m)
 
-            i += 1
+            commodity_index += 1
             #if i >= 3:
             #    break # dump leading 3 only because we're still debugging
 
@@ -344,9 +333,9 @@ if __name__ == '__main__':
         if dump_sub_category is not None:
             # Define Sub Category Entry
 
-            main_cat = sixlucky_categories.all_categories[3]['main_cat']
-            url = sixlucky_categories.all_categories[3]['sub_cats'][2]['url']
-            sub_cat = sixlucky_categories.all_categories[3]['sub_cats'][2]['sub_cat']
+            main_cat = sixlucky_categories.all_categories[0]['main_cat']
+            url = sixlucky_categories.all_categories[0]['sub_cats'][0]['url']
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
 
             sixlucky_dump_sub_category(url, main_cat, sub_cat)
             pass
@@ -383,8 +372,10 @@ if __name__ == '__main__':
             pass
 
         if parse_list_file is not None:
-            main_cat = "飲品零食"
-            sub_cat = "汽水"
+            main_cat = sixlucky_categories.all_categories[0]['main_cat']
+            url = sixlucky_categories.all_categories[0]['sub_cats'][0]['url']
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
+
             sixlucky_parse_list_file(main_cat, sub_cat, parse_list_file)
             pass
         
