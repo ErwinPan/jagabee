@@ -64,8 +64,9 @@ def pycurl_wrapper_fetch_internal(url, target_file = '', referer = ''):
 
         a = {}
         a['ori_url'] = url
+        r = "<!-- " + str(a) + " -->\n" + r
+
         f = open( target_file , 'wb' )
-        f.write("<!-- \n" + str(a) + "\n-->\n")
         f.write( r )
         f.close()
 
