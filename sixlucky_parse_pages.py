@@ -108,10 +108,16 @@ def parse_list_page(html, b_first_page, ret={}):
     table_text = ""
 
     # List pattern 1: having tbody
-    all_matches = re.findall( re.compile( '<table border=\"0\" width=\"100%\" cellspacing=\"2\" cellpadding=\"6\" class=\"font09h15\">(.*)</tbody></table>[\s]*<style type=\"text/css\">' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    all_matches = re.findall( re.compile( '<center>[\s]*?<table border=\"?0\"? width=\"?100%\"? cellspacing=\"?2\"? cellpadding=\"?6\"? class=\"?font09h15\"?>(.*)</table>[\s]*?</center>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    #all_matches = re.findall( re.compile( '<table border=\"?0\"? width=\"?100%\"? cellspacing=\"?2\"? cellpadding=\"?6\"? class=\"?font09h15\"?>(.*)</tbody></table>[\s]*<style type=\"?text/css\"?>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
+    #dump_match(all_matches)
 
-    # List pattern 2: no tbody
-    if len(all_matches) <= 0:
+    if len(all_matches) > 0:
+        print "pattern1 matches"
+        pass
+    else:
+        # List pattern 2: no tbody
+        print "pattern2"
         all_matches = re.findall( re.compile( '<table border=\"?0\"? width=\"?100%\"? cellspacing=\"?2\"? cellpadding=\"?6\"? class=\"?font09h15\"?>(.*?)</table>' , flags=(re.IGNORECASE|re.DOTALL)) , html)
 
     #dump_match(all_matches)
@@ -123,6 +129,7 @@ def parse_list_page(html, b_first_page, ret={}):
         print "No Table exist"
         return ret
 
+    #print "table_text = %s" % table_text
     # Parse table list which returns a list of "str"s
     all_matches = re.findall( re.compile( '<a href=\"(.*?)\">' , flags=(re.IGNORECASE|re.DOTALL)) , table_text)
     for match in all_matches:
@@ -235,6 +242,7 @@ if __name__ == '__main__':
         #f = open("6lucky/page_list_head/a.html", "r")
         #f = open("6lucky/page_list_head/no_list.html", "r")
         #f = open("sixlucky/身體保養清潔/頸部保養/list_0.html", "r")
+        #f = open("sixlucky/身體保養清潔/手部保養_清潔/list_0.html", "r")
         html_text = f.read()
         f.close()
 
