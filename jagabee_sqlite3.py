@@ -36,11 +36,11 @@ def db_insert_product(p, cur):
         ret = 1
 
     except sqlite3.Error, e:
-        print 'sqlite3.Error: '
+        print '[db_insert_product] sqlite3.Error: '
         traceback.print_exc()
         pass
 
-    print 'db_insert_product, ret = %d' % ret
+    #print 'db_insert_product, ret = %d' % ret
     return ret
 
 
@@ -60,11 +60,11 @@ def db_insert_price(p, cur):
         ret = 1
 
     except sqlite3.Error, e:
-        print 'sqlite3.Error: '
+        print '[db_insert_price] sqlite3.Error: '
         traceback.print_exc()
         pass
 
-    print 'db_insert_price, ret = %d' % ret
+    #print 'db_insert_price, ret = %d' % ret
     return ret
 
 def db_insert_rows(products, db_name):
