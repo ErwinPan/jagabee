@@ -23,7 +23,7 @@ sys.setdefaultencoding("utf-8")
 
 sixlucky_working_directory = '.'
 
-def sixlucky_get_directory(url, main_cat = "main_cat", sub_cat = "sub_cat"):
+def sixlucky_get_directory(main_cat = "main_cat", sub_cat = "sub_cat"):
 
     directory = "sixlucky/"  + string.replace(main_cat, "/", "_") + "/" + string.replace(sub_cat, "/", "_")
 
@@ -34,7 +34,7 @@ def sixlucky_url_to_local_file(url, main_cat = "main_cat", sub_cat = "sub_cat", 
 
     global sixlucky_working_directory
 
-    sixlucky_working_directory = sixlucky_get_directory(url, main_cat, sub_cat)
+    sixlucky_working_directory = sixlucky_get_directory(main_cat, sub_cat)
 
     try:
         os.makedirs(sixlucky_working_directory)
@@ -190,7 +190,7 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
             traceback.print_exc()
         finally:
             # Sleep for a while to avoid busy accessing
-            time.sleep(random.random())
+            time.sleep(random.random()*3)
             pass
 
    
@@ -289,7 +289,7 @@ def main(argv):
 
     try:
         #printf(" argv=%s", str(argv))
-        opts, other_args = getopt.getopt(argv[1:],"m:srl:d:a",["dump-main-category=", "dump-sub-category", "dump-commodity-from-sub-category-dirs", "parse-list-file=", "parse-list-dir=", "collect-all-db"])
+        opts, other_args = getopt.getopt(argv[1:],"m:srlda",["dump-main-category=", "dump-sub-category", "dump-commodity-from-sub-category-dirs", "parse-list-file", "parse-list-dir", "collect-all-db"])
 
     except getopt.GetoptError:
         printf("getopt.GetoptError: ")
@@ -305,9 +305,9 @@ def main(argv):
         elif opt in ("-r", "--dump-commodity-from-sub-category-dirs"):
             dump_commodity_from_sub_category_dirs = True
         elif opt in ("-l", "--parse-list-file"):
-            parse_list_file = arg           # file (string)
+            parse_list_file = True
         elif opt in ("-d", "--parse-list-dir"):                 # A dir containing whole list pages
-            parse_list_dir = arg            # dir (string)
+            parse_list_dir = True
         elif opt in ("-a", "--collect-all-db"):
             collect_all_db = True
 
@@ -374,15 +374,21 @@ if __name__ == '__main__':
 
         if parse_list_file is not None:
             main_cat = sixlucky_categories.all_categories[0]['main_cat']
-            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][1]['sub_cat']
 
-            sixlucky_parse_list_file(main_cat, sub_cat, parse_list_file)
+            list_dir = sixlucky_get_directory(main_cat, sub_cat)
+            list_file = list_dir + "/" + "list_0.html"
+
+            sixlucky_parse_list_file(main_cat, sub_cat, list_file)
             pass
         
         if parse_list_dir is not None:
             main_cat = sixlucky_categories.all_categories[0]['main_cat']
-            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
-            sixlucky_parse_list_dir(main_cat, sub_cat, parse_list_dir)
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][1]['sub_cat']
+
+            list_dir = sixlucky_get_directory(main_cat, sub_cat)
+
+            sixlucky_parse_list_dir(main_cat, sub_cat, list_dir)
             pass
 
         if collect_all_db is not None:
