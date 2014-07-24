@@ -22,6 +22,7 @@ sys.setdefaultencoding("utf-8")
 
 
 sixlucky_working_directory = '.'
+commodity_index = 0
 
 def sixlucky_get_directory(main_cat = "main_cat", sub_cat = "sub_cat"):
 
@@ -158,6 +159,8 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
     
     printf("\n==> Start to parse list file: %s ...", list_file)
 
+    global commodity_index
+
     if list_file != '':
         f = open( list_file , 'r' )
         html_text = f.read()
@@ -168,8 +171,6 @@ def sixlucky_parse_list_file(main_cat, sub_cat, list_file, db_name = 'test.db'):
 
     ret = {}
     ret = sixlucky_parse_pages.parse_list_page(html_text, True, ret)
-
-    commodity_index = 0
 
     list_dump = {'list_file' : list_file}
     list_dump['commodities'] = []
