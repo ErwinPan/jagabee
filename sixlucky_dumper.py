@@ -213,8 +213,10 @@ def sixlucky_parse_list_dir(main_cat, sub_cat, list_dir):
     printf("\n=> Start to parse list pages in current directory: %s ...", list_dir)
 
     global sixlucky_working_directory
+    global commodity_index
     
     sixlucky_working_directory = list_dir
+    commodity_index = 0
 
     all_files = []
     db_name = os.path.join(list_dir, "products.db")
@@ -345,16 +347,16 @@ if __name__ == '__main__':
         if dump_commodity_from_sub_category_dirs is not None:
             # Define Sub Category Entry
 
-            if False:  # debug only
-                m = sixlucky_categories.all_categories[0]
+            if True:  # debug first main category
+                m = sixlucky_categories.all_categories[6]
                 main_cat = m['main_cat']
 
-                s = m['sub_cats'][7]
-                sub_cat = s['sub_cat']
-                sub_cat_dir = "./" + s['url']
+                for s in m['sub_cats']:
+                    sub_cat = s['sub_cat']
+                    sub_cat_dir = sixlucky_get_directory(main_cat, sub_cat)
         
-                printf ("dump_commodity_from_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
-                sixlucky_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
+                    printf ("dump_commodity_from_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
+                    sixlucky_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
 
             else:
 
@@ -364,10 +366,9 @@ if __name__ == '__main__':
                     printf ("parse main catetories ... %s", main_cat)
 
                     for s in m['sub_cats']:
-
                         sub_cat = s['sub_cat']
-                        sub_cat_dir = "./" + s['url']
-
+                        sub_cat_dir = sixlucky_get_directory(main_cat, sub_cat)
+        
                         printf ("dump_commodity_from_sub_category_dirs, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
                         sixlucky_parse_list_dir(main_cat, sub_cat, sub_cat_dir)
 
@@ -385,7 +386,7 @@ if __name__ == '__main__':
         
         if parse_list_dir is not None:
             main_cat = sixlucky_categories.all_categories[0]['main_cat']
-            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][1]['sub_cat']
+            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
 
             list_dir = sixlucky_get_directory(main_cat, sub_cat)
 
