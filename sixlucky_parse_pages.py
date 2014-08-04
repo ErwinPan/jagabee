@@ -164,6 +164,7 @@ def parse_commodity_page(html, ret={}):
     ret["shop"] = "六福香水(6lucky)"
     ret["price"] = "0"
     ret["ori_price"] = "0"
+    ret["img_url"] = ""
 
     try:
         all_matches = re.findall( re.compile( '^<!-- (.*?) -->' , flags=(re.IGNORECASE|re.DOTALL) ) , html)
