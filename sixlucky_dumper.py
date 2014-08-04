@@ -348,7 +348,7 @@ if __name__ == '__main__':
             # Define Sub Category Entry
 
             if True:  # debug first main category
-                m = sixlucky_categories.all_categories[6]
+                m = sixlucky_categories.all_categories[10]
                 main_cat = m['main_cat']
 
                 for s in m['sub_cats']:
@@ -395,17 +395,17 @@ if __name__ == '__main__':
 
         if collect_all_db is not None:
 
-            all_products_db = "all.db"
+            all_products_db = "sixlucky/all.db"
 
             jagabee_sqlite3.db_create(all_products_db)
 
-            if False:
+            if False:    # test
                 m = sixlucky_categories.all_categories[0]
                 main_cat = m['main_cat']
 
-                s = m['sub_cats'][7]
+                s = m['sub_cats'][0]
                 sub_cat = s['sub_cat']
-                sub_cat_dir = "./" + s['url']
+                sub_cat_dir = sixlucky_get_directory(main_cat, sub_cat)
         
                 printf ("collect_all_db, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
                 jagabee_sqlite3.db_merge(sub_cat_dir + "/products.db", all_products_db)
@@ -414,17 +414,20 @@ if __name__ == '__main__':
                 for m in sixlucky_categories.all_categories:
                     
                     main_cat = m['main_cat']
-                    printf ("parse main catetories ... %s", main_cat)
 
                     for s in m['sub_cats']:
-
+                        s = m['sub_cats'][0]
                         sub_cat = s['sub_cat']
-                        sub_cat_dir = "./" + s['url']
-
+                        sub_cat_dir = sixlucky_get_directory(main_cat, sub_cat)
+        
                         printf ("collect_all_db, main_cat = %s, sub_cat = %s, dir = %s", main_cat, sub_cat, sub_cat_dir)
                         jagabee_sqlite3.db_merge(sub_cat_dir + "/products.db", all_products_db)
 
-            pass
+                        pass
+
+                    pass
+
+                pass
 
         printf("done")
         sys.exit(0)

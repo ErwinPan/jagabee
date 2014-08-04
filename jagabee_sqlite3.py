@@ -119,7 +119,7 @@ def db_create(db_name):
 
         try:
             cur.execute('''CREATE TABLE prices
-                             (barcode text PRIMARY KEY, price text, ori_price text, shop text, description text, ori_url text)''')
+                             (barcode text, price text, ori_price text, shop text, description text, ori_url text)''')
         except sqlite3.OperationalError:
             #print 'sqlite3.OperationalError: insert fail due to table exist '
             #traceback.print_exc()
@@ -156,34 +156,62 @@ def db_save_products(products, db_name = 'test.db'):
     return inserted_row_count
 
 
-def db_merge(src_db, dest_db):
+def db_merge_table(cur, table):
+
+    print "[db_merge_table] table: %s" % table
 
     try:
-        print "insert into db %s from %s starts ..." % (dest_db, src_db)
+        # Insert all into dest_db_table
+        cur.execute("insert into " + table + " select * from src_db." + table)
 
+        print "[db_merge_table] table: %s done" % table
+
+    except sqlite3.OperationalError:
+        print '[db_merge_table] sqlite3.OperationalError: insert fail '
+        traceback.print_exc()
+        pass
+
+    except Exception, e:
+        print '[db_merge_table] sqlite3.OperationalError: insert other fail '
+        traceback.print_exc()
+        return False
+
+    return True
+
+
+
+def db_merge(src_db, dest_db):
+
+    print "[db_merge] insert into db %s from %s starts ..." % (dest_db, src_db)
+
+    try:
         conn = sqlite3.connect(dest_db)
 
         cur = conn.cursor()
 
         cur.execute("attach '" + src_db + "' as src_db")
 
-        # Insert all into dest_db_table
-        cur.execute("insert into products select * from src_db.products")
+        # Table 1
+        db_merge_table(cur, "products")
 
-        cur.execute("detach database src_db")
+        # Table 2
+        db_merge_table(cur, "prices")
 
-        print "insert into db %s from %s done" % (dest_db, src_db)
+        print "[db_merge] insert into db %s from %s done" % (dest_db, src_db)
 
 
     except sqlite3.OperationalError:
-        print 'sqlite3.OperationalError: insert fail '
+        print '[db_merge] sqlite3.OperationalError: insert fail '
         traceback.print_exc()
         pass
 
     except Exception, e:
-        print 'sqlite3.OperationalError: insert other fail '
+        print '[db_merge] sqlite3.OperationalError: insert other fail '
         traceback.print_exc()
         return False
+
+    # detach src_db
+    cur.execute("detach database src_db")
 
     # Save (commit) the changes
     conn.commit()
