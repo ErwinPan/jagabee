@@ -385,8 +385,8 @@ if __name__ == '__main__':
             pass
         
         if parse_list_dir is not None:
-            main_cat = sixlucky_categories.all_categories[0]['main_cat']
-            sub_cat = sixlucky_categories.all_categories[0]['sub_cats'][0]['sub_cat']
+            main_cat = sixlucky_categories.all_categories[6]['main_cat']
+            sub_cat = sixlucky_categories.all_categories[6]['sub_cats'][0]['sub_cat']
 
             list_dir = sixlucky_get_directory(main_cat, sub_cat)
 
@@ -416,7 +416,6 @@ if __name__ == '__main__':
                     main_cat = m['main_cat']
 
                     for s in m['sub_cats']:
-                        s = m['sub_cats'][0]
                         sub_cat = s['sub_cat']
                         sub_cat_dir = sixlucky_get_directory(main_cat, sub_cat)
         
