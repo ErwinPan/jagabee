@@ -12,6 +12,19 @@ def pycurl_wrapper_fetch(url, target_file = '', referer = '', retry = 3):
 
     html_text = ''
 
+    try:
+        f = open( target_file , 'r' )
+
+        # Local target exists, just read from it and return
+        html_text = f.read( r )
+        f.close()
+
+        return html_text
+
+    except Exception, e:
+        # Local target not exists
+        pass
+
     for i in range(0, retry):
         try:
             print 'http pycurl_wrapper_fetch, try = %d, url = %s' % (i, url)
