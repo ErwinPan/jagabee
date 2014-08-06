@@ -111,7 +111,7 @@ def db_create(db_name):
         try:
             # Create table
             cur.execute('''CREATE TABLE products
-                             (barcode text PRIMARY KEY, title text, main_cat text, sub_cat text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
+                             (barcode text, title text, main_cat text, sub_cat text, vendor text, vendor_addr text, vendor_tel text, website text, reserv_date text, img_url text)''')
         except sqlite3.OperationalError:
             #print 'sqlite3.OperationalError: insert fail due to table exist '
             #traceback.print_exc()
@@ -156,15 +156,58 @@ def db_save_products(products, db_name = 'test.db'):
     return inserted_row_count
 
 
-def db_merge_table(cur, table):
+
+def db_merge_table_by_rows(conn, cur, table):
+
+    print "[db_merge_table_by_rows] table: %s" % table
+    row_index = 0
+
+    try:
+        cur.execute("SELECT * FROM src_db." + table)
+        #src_rows = cur.fetchall()
+               
+        #print "[db_merge_table_by_rows] src_rows counts: %d" % len(src_rows)
+
+        row = cur.fetchone()
+        while row is not None :
+    
+            print "[db_merge_table_by_rows] row_index = %d, row: %s" % (row_index, row[0])
+            cur2 = conn.cursor()
+
+            try:
+                cur2.execute("INSERT INTO " + table + " SELECT * FROM src_db." + table + " WHERE barcode = ?", (row[0],))
+
+            except Exception, e:
+                print '[db_merge_table_by_rows] sqlite3 insert single row fail, barcode = %s' % row[0]
+                traceback.print_exc()
+                pass
+
+            row_index += 1
+            row = cur.fetchone()
+            print "[db_merge_table_by_rows] row_index = %d" % (row_index,)
+
+    except Exception, e:
+        print '[db_merge_table_by_rows] sqlite3 generic error '
+        traceback.print_exc()
+        
+        #
+
+
+def db_merge_table(conn, cur, table):
 
     print "[db_merge_table] table: %s" % table
 
     try:
         # Insert all into dest_db_table
-        cur.execute("insert into " + table + " select * from src_db." + table)
+        cur.execute("INSERT INTO " + table + " SELECT * FROM src_db." + table)
 
         print "[db_merge_table] table: %s done" % table
+
+    except sqlite3.IntegrityError:
+        db_merge_table_by_rows(conn, cur, table)
+        #print '[db_merge_table] sqlite3.IntegrityError: insert fail '
+        #traceback.print_exc()
+        pass
 
     except sqlite3.OperationalError:
         print '[db_merge_table] sqlite3.OperationalError: insert fail '
@@ -182,6 +225,7 @@ def db_merge_table(cur, table):
 
 def db_merge(src_db, dest_db):
 
+    print "\n ========================================================================= \n"
     print "[db_merge] insert into db %s from %s starts ..." % (dest_db, src_db)
 
     try:
@@ -192,10 +236,10 @@ def db_merge(src_db, dest_db):
         cur.execute("attach '" + src_db + "' as src_db")
 
         # Table 1
-        db_merge_table(cur, "products")
+        db_merge_table(conn, cur, "products")
 
         # Table 2
-        db_merge_table(cur, "prices")
+        db_merge_table(conn, cur, "prices")
 
         print "[db_merge] insert into db %s from %s done" % (dest_db, src_db)
 
